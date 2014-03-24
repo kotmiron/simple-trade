@@ -1,0 +1,58 @@
+jms_security_extra:
+    secure_all_services: false
+    expressions: true
+
+security:
+    acl:
+        connection: default
+    encoders:
+        SimpleSolution\SimpleTradeBundle\Entity\Users:
+            algorithm:   sha1
+            iterations: 8
+            encode_as_base64: false
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+
+    providers:
+        user_db:
+            entity:
+                class: SimpleSolution\SimpleTradeBundle\Entity\Users
+                property: login
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        login:
+            pattern:    ^/login$
+            anonymous: ~
+        register:
+            pattern:    ^/(register|register/customer|register/performer)$
+            anonymous: ~
+        restore:
+            pattern:    ^/(restore|restore/.*)$
+            anonymous: ~
+        blocked:
+            pattern:    ^/blocked$
+            anonymous: ~
+        public:
+            pattern:    ^/public
+            anonymous: ~
+        secured_area:
+            pattern:    ^/
+            form_login:
+                check_path: /login_check
+                login_path: /public
+                default_target_path: /
+                always_use_default_target_path: true
+            logout:
+                path:   /logout
+                target: /
+
+            #anonymous: ~
+
+            #http_basic:
+            #    realm: "Secured Demo Area"
+
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
