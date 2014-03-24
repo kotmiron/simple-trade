@@ -1,0 +1,35 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+
+  <form action="" method="post" {{ form_enctype(form) }} class="form-horizontal">
+      {{ form_errors(form) }}
+
+      <fieldset>
+        <legend>Пополнение баланса компании {{ company.getContent().getTitle() }}</legend>
+
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.money) }}</div>
+            <div class="controls">
+                {{ form_widget(form.money) }}
+                <span class="help-inline">{{ form_errors(form.money) }}</span>
+            </div>
+        </div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.comment) }}</div>
+            <div class="controls">
+                {{ form_widget(form.comment) }}
+                <span class="help-inline">{{ form_errors(form.comment) }}</span>
+            </div>
+        </div>
+    </fieldset>
+    {{ form_rest(form) }}
+
+    <div class="control-group">
+        <div class="controls">
+            <a href="{{ url('companies_managment') }}">отмена</a>
+            <input type="submit" value="Сохранить" class="btn" />
+        </div>
+    </div>
+  </form>
+{% endblock %}

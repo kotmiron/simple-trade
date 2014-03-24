@@ -1,0 +1,395 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+<script src="{{ asset('js/bootstrap.min.js') }}" type="text/javascript" charset="utf-8"></script>
+<script src="{{ asset('js/jquery-ui.js') }}" type="text/javascript" charset="utf-8"></script>
+<script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/jquery-ui-custom.css') }}" />
+{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		{% if app.user.canI('/trade/notice') %}
+		<li><a href="{{ path('trade_notice', {'id': auction.getId()}) }}">Извещение о проведении электронного аукциона</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/auction/request') %}
+		<li><a href="{{ path('trade_clarifications_auction_request', {'id': auction.getId()}) }}">Разъяснения к аукциону</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/offer') %}
+		<li><a href="{{ path('trade_offer', {'id': auction.getId()}) }}">Моя заявка на участие</a></li>
+		{% endif %}
+		<li class="active"><a>Заявки на участие</a></li>
+		{% if app.user.canI('/trade/room') %}
+		<li><a href="{{ path('trade_room', {'id': auction.getId()}) }}">Аукционный зал</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/results/answer') %}
+		<li><a href="{{ path('trade_clarifications_results_answer', {'id': auction.getId()}) }}">Разьяснения результатов</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+<span style="display:none">Время до окончания срока подачи заявок: <div id="timeToEndOffer"></div></span>
+<span style="display:none">Время до окончания срока рассмотрения заявок: <div id="timeToEndConsideration"></div></span>
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId()} %}
+
+<h2>Заявки на участие</h2>
+
+{% if protocol %}
+Протокол рассмотрения заявок на участие<br><br>
+<div style="border: #000000 solid 1px; padding: 15px;">
+	<div align="right"><a href="{{ url('requests_complaints') }}/add/{{ auctionCompany.getId() }}">Подать жалобу на компанию {{ auctionCompany.getContent().getTitle() }}</a></div>
+	Место разьяснения: {{ protocol.protocol.getContent.getPlaceView }}<br>
+	Дата и время начала рассмотрения: {{ protocol.protocol.getContent.getDatetimeStartView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	Дата и время окончания рассмотрения: {{ protocol.protocol.getContent.getDatetimeEndView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	<br>
+	<b>Состав единой комисси:</b><br><br>
+
+	{{ protocol.protocol.getContent.getFullName1 }}, {{ protocol.protocol.getContent.getPosition1 }}<br>
+	{{ protocol.protocol.getContent.getFullName2 }}, {{ protocol.protocol.getContent.getPosition2 }}<br>
+	{{ protocol.protocol.getContent.getFullName3 }}, {{ protocol.protocol.getContent.getPosition3 }}<br>
+
+	<br>
+	<b>Итоги рассмотрения заявок:</b><br><br>
+	<table border="1" style="width: 400px;">
+		<tr>
+			<td>Название компании-подрядчика</td>
+			<td>Допущен к участию в аукционе</td>
+		</tr>
+	{% for title,offer in offersForProtocol %}
+		<tr>
+			<td>{{ title }}</td>
+			<td>{{ offer ? 'да' : 'нет' }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	<br><br>
+	<b>Приложенные документы</b>
+	<br>
+	{% for document in protocol.documents %}
+		{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+		<a href="{{ path('trade_protocols_get_doc', {'id': protocol.protocol.getId(), 'idFile': document.getId()}) }}" target="_blank">
+			Скачать
+		</a>
+		<br>
+	{% endfor %}
+</div>
+{% elseif protocol_form %}
+
+<div id="protocol" style="border: #000000 solid 1px; padding: 15px; display:none">
+	Протокол рассмотрения заявок на участие<br><br>
+	<form id="protocol_form_id" action="" method="post" {{ form_enctype(protocol_form) }}>
+		  {{ form_errors(protocol_form) }}
+
+		  <div class="control-group">
+			<div class="control-label">{{ form_label(protocol_form.placeView) }}</div>
+			<div class="controls">
+				{{ form_widget(protocol_form.placeView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.placeView) }}</span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="control-label">{{ form_label(protocol_form.datetimeStartView) }}</div>
+			<div class="controls">
+				{{ form_widget(protocol_form.datetimeStartView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.datetimeStartView) }}</span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="control-label">{{ form_label(protocol_form.datetimeEndView) }}</div>
+			<div class="controls">
+				{{ form_widget(protocol_form.datetimeEndView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.datetimeEndView) }}</span>
+			</div>
+		</div>
+
+		<table>
+			<tr>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.fullName1) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.fullName1) }}
+							<span class="help-inline">{{ form_errors(protocol_form.fullName1) }}</span>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.position1) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.position1) }}
+							<span class="help-inline">{{ form_errors(protocol_form.position1) }}</span>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.fullName2) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.fullName2) }}
+							<span class="help-inline">{{ form_errors(protocol_form.fullName2) }}</span>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.position2) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.position2) }}
+							<span class="help-inline">{{ form_errors(protocol_form.position2) }}</span>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.fullName3) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.fullName3) }}
+							<span class="help-inline">{{ form_errors(protocol_form.fullName3) }}</span>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="control-group">
+						<div class="control-label">{{ form_label(protocol_form.position3) }}</div>
+						<div class="controls">
+							{{ form_widget(protocol_form.position3) }}
+							<span class="help-inline">{{ form_errors(protocol_form.position3) }}</span>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		</br>
+
+		<fieldset>
+			<legend>Документы</legend>
+			<div class="p20">
+				<b>Добавить новые:</b>
+				<div class="control-group">
+					<ul class="files" data-prototype="{{ form_widget(protocol_form.files.vars.prototype)|e }}">
+						{% for file in protocol_form.files %}
+						<li>{{ form_row(file.title) }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</fieldset>
+
+		<br>
+		<table border="1" style="width: 400px;">
+			<tr>
+				<td>Название компании-подрядчика</td>
+				<td>Допущен к участию в аукционе</td>
+			</tr>
+		{% for title,offer in offersForProtocol %}
+			<tr>
+				<td>{{ title }}</td>
+				<td>{{ offer ? 'да' : 'нет' }}</td>
+			</tr>
+		{% endfor %}
+		</table>
+		<br>
+		<a href="" id="close">Свернуть</a>
+		<input type="submit" value="Опубликовать протокол"/>
+		{{ form_rest(protocol_form) }}
+	</form>
+</div>
+{% if (timeToEndOffer < 0) and (timeToEndConsideration < 0) %}
+	<input type="submit" value="Опубликовать протокол" class="btn" id="public"/>
+{% else %}
+	<input type="submit" value="Опубликовать протокол" class="btn" disabled="disabled" id="public"/>
+{% endif %}
+{% endif %}
+
+<br><br>
+<table border="1">
+	{% for offer in offers %}
+	<tr id="short_{{ offer.getId() }}">
+		<td>
+			Заявка №{{ offer.getId() }} Подана {{ offer.getCreatedAt() | date("d.m.Y, H:i:s", "Europe/Moscow") }}
+			<br>
+			Наименование организации-подрядчика {{ offer.getCompany().getContent().getTitle() }}
+			<br>
+			{{ offer.getStatus().getTitle() }}
+			<br>
+			{% if ((timeToEndOffer < 0) and (timeToEndConsideration > 0)) %}
+				{% if offer.getStatus().getName() == 'ON_CONSIDERATION' %}
+					<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn">Принять</a>
+					<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn">Отклонить</a>
+				{% else %}
+					<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn disabled">Принять</a>
+					<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn disabled">Отклонить</a>
+				{% endif %}
+			{% else %}
+				<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn disabled">Принять</a>
+				<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn disabled">Отклонить</a>
+			{% endif %}
+			<br>
+			<a href="" class="show_full">Раскрыть заявку</a>
+		</td>
+	</tr>
+	<tr id="full_{{ offer.getId() }}" style="display:none">
+		<td>
+			Заявка №{{ offer.getId() }} Подана {{ offer.getCreatedAt() | date("d.m.Y, H:i:s", "Europe/Moscow") }}
+			<br>
+			<h3>Обшая информация о компании</h3>
+			<table>
+				<tr>
+					<td width="50%">
+						Наименование компании-подрядчика: {{ offer.getCompany().getContent().getTitle() }}
+					</td>
+					<td>
+						Контактное лицо: {{ offer.getCompany().getContent().getUserName() }}<br>
+						E-mail контактного лица: {{ offer.getCompany().getContent().getEmail() }}<br>
+						Телефон контактного лица: {{ offer.getCompany().getContent().getPhone() }}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						{#{% for sro in sros %}
+						СРО {{ sro.getType().getTitle() }} {{ sro.getContent().getTitle() }}<br>
+						{% endfor %}#}
+					</td>
+					<td>
+						Квалификации:
+						{% for skill in offer.getCompany().getCompaniesSkills() %}
+						{{ skill.getSkill().getTitle() }}
+						{% endfor %}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						{% if offer.getId() in files | keys %}
+							{% for file in files[offer.getId()] %}
+								{{ file.getDocument().getContent().filename }} - {{ file.getDocument().getContent().title }}
+								<a href="{{ path('offers_get_doc', {'id': offer.getId(), 'idFile': file.getId()}) }}" target="_blank">
+									Скачать
+								</a>
+								<br>
+							{% endfor %}
+						{% endif %}
+					</td>
+				</tr>
+			</table>
+			{{ offer.getStatus().getTitle() }}
+			<br>
+			{% if ((timeToEndOffer < 0) and (timeToEndConsideration > 0)) %}
+				{% if offer.getStatus().getName() == 'ON_CONSIDERATION' %}
+					<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn">Принять</a>
+					<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn">Отклонить</a>
+				{% else %}
+					<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn disabled">Принять</a>
+					<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn disabled">Отклонить</a>
+				{% endif %}
+			{% else %}
+					<a href="{{ url('offers') }}/allow/{{ offer.getId() }}" class="btn disabled">Принять</a>
+					<a href="{{ url('offers') }}/reject/{{ offer.getId() }}" class="btn disabled">Отклонить</a>
+			{% endif %}
+			<br>
+			<a href="" class="hide_full">Свернуть заявку</a>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#protocol_datetimeStartView').datetimepicker({ dateFormat: 'dd-mm-yy' });
+		$('#protocol_datetimeEndView').datetimepicker({ dateFormat: 'dd-mm-yy' });
+
+		var allOfferSeconds = parseFloat('{{ timeToEndOffer }}');
+		var allConsiderationSeconds = parseFloat('{{ timeToEndConsideration }}');
+		if (allOfferSeconds > 0)
+		{
+			$('#timeToEndOffer').closest('span').show();
+			timer = setInterval(function ()
+			{
+				if (allOfferSeconds > 0) {
+					allOfferSeconds--;
+					var days = Math.floor(allOfferSeconds / 86400);
+					var hours = Math.floor((allOfferSeconds - days * 86400) / 3600);
+					var minutes = Math.floor((allOfferSeconds - days * 86400 - hours * 3600) / 60);
+					var seconds = allOfferSeconds - days * 86400 - hours * 3600 - minutes * 60;
+
+					$('#timeToEndOffer').text(days + ' дн ' + hours + ' ч ' + minutes + ' мин ' + seconds + ' сек');
+				} else {
+					clearInterval(timer);
+					$('#timeToEndOffer').text('время подачи заявок закончилось. обновите страницу');
+				}
+			}, 1000);
+		}
+		else if (allConsiderationSeconds > 0)
+		{
+			$('#timeToEndConsideration').closest('span').show();
+			timer = setInterval(function ()
+			{
+				if (allConsiderationSeconds > 0) {
+					allConsiderationSeconds--;
+					var days = Math.floor(allConsiderationSeconds / 86400);
+					var hours = Math.floor((allConsiderationSeconds - days * 86400) / 3600);
+					var minutes = Math.floor((allConsiderationSeconds - days * 86400 - hours * 3600) / 60);
+					var seconds = allConsiderationSeconds - days * 86400 - hours * 3600 - minutes * 60;
+
+					$('#timeToEndConsideration').text(days + ' дн ' + hours + ' ч ' + minutes + ' мин ' + seconds + ' сек');
+				} else {
+					clearInterval(timer);
+					$('#timeToEndConsideration').text('время рассмотрения заявок закончилось. обновите страницу');
+				}
+			}, 1000);
+		}
+
+		$('#public').click(function()
+		{
+			$('#protocol').show();
+			$('#public').hide();
+			return false;
+		});
+
+		$('#close').click(function()
+		{
+			$('#protocol').hide();
+			$('#public').show();
+			return false;
+		});
+
+		$('a.show_full').click(function()
+		{
+			var tr = $(this).closest('tr')
+			var id = tr.attr('id').replace('short_', '');
+			$('#full_' + id).show();
+			$(tr).hide();
+			return false;
+		});
+
+		$('a.hide_full').click(function()
+		{
+			var tr = $(this).closest('tr')
+			var id = tr.attr('id').replace('full_', '');
+			$('#short_' + id).show();
+			$(tr).hide();
+			return false;
+		});
+
+		$('a.disabled').click(function()
+		{
+			return false;
+		});
+	});
+</script>
+
+{% endblock %}

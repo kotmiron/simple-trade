@@ -1,0 +1,65 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2><a href="{{ url('cabinet') }}">Личный кабинет</a> » Документы компании</h2>
+<table class="info-list-table table table-striped table-hover">
+	<thead>
+		<tr>
+            <th width="6%">ID</th>
+            <th width="15%">Загружен</th>
+            <th width="15%">Название</th>
+            <th width="20%">Файл</th>
+            <th width="20%">Статус</th>
+            <th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for document in documents %}
+        <tr>
+			<td>
+				{{ document.id }}
+			</td>
+			<td>
+				{% if document.createdAt %}{{ document.createdAt|date('Y-m-d H:i:s', 'Europe/Moscow') }}{% endif %}
+			</td>
+			<td>
+				{{ document.title }}
+			</td>
+			<td>
+				{{ document.filename }}
+			</td>
+			<td>
+				{{ document.isActive }}
+			</td>
+			<td>
+				<a href="documents/remove/{{ document.id }}">удалить</a>
+				<!-- <a href="documents/change/{{document.id }}">изменить</a> -->
+			</td>
+        </tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+
+
+<br>
+<form action="" method="post" id="file_add" {{ form_enctype(form) }} >
+	  <div style="color:#FF0000">{{ form_errors(form) }}</div>
+
+	<fieldset>
+		<legend>Добавить файл</legend>
+		<div class="control-group">
+			<ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+				{% for file in form.files %}
+				<li>{{ form_row(file.file) }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</fieldset>
+
+	{{ form_rest(form) }}
+
+
+	<input type="submit" value="Сохранить" />
+</form>
+{% endblock %}

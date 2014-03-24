@@ -1,0 +1,20 @@
+OrdersContent:
+    type: entity
+    table: orders_content
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        title:
+            type: string
+            length: 128
+            fixed: false
+            nullable: false
+        content:
+            type: blob
+            nullable: false
+    lifecycleCallbacks: {  }

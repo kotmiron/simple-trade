@@ -1,0 +1,139 @@
+form:
+  login: Имя пользователя
+  current_password: Текущий пароль
+  password: Пароль
+  password_confirmation: Повторите пароль
+  role: Роль организации при размещении
+  sro: СРО
+  region: Регион
+  inn: ИНН
+  kpp: КПП
+  ogrn: ОГРН
+  name: Название компании
+  title: Полное наименование
+  lastname: Фамилия
+  firstname: Имя
+  patronymic: Отчество
+  position: Должность
+  grounds:  Действует на основании
+  email: Email
+  phone: Телефон
+  filename: Документ подтверждающий полномочия
+  skills: Квалификации
+
+create_auctions_form:
+  tradingForm: Форма торгов
+  internetAddress: Адрес электронной площадки в сети "Интернет"
+  noticeNumber: Номер извещения
+  name: Краткое наименование аукциона
+  noticeLink: Ссылка на извещение, опубликованное на ООС
+  noticePrintform: Печатная форма извещения на ООС
+  nomenclature: Номенклатура заказа
+  companyName: Наименование организации
+  region: Регион
+  mail: Почтовый адрес
+  email: Адрес электронной почты
+  phones: Номера контактных телефонов / факса заказчика, уполномоченного органа, специализированной организации
+  contactName: Контактное лицо
+  title: Полное наименование аукциона (предмет контракта)
+  startPrice: Начальная (максимальная) цена контракта
+  endPrice: Конечная (минимальная) цена контракта
+  currency: Валюта контракта
+  deliverySize: Количество поставляемого товара, объема выполняемых работ, оказываемых услуг
+  deliveryPlace: Место поставки
+  deliveryPeriod: Срок поставки товара, выполнения работ, оказания услуг
+  info: Дополнительная информация
+  endOffer: Дата и время окончания срока подачи заявок
+  endConsideration: Дата окончания срока рассмотрения заявок
+  startAuction: Дата электронного аукциона
+  skills: Квалификации
+  placeToAcceptOffers: Место принятия заявок
+  datetimeToAcceptOffers: Дата и время принятия заявок
+
+create_offers_form:
+  filename: Документ
+
+create_sro_from:
+  position: Должность
+  grounds:  Действует на основании
+  email: Email
+  login: Имя пользователя
+  password: Пароль
+  name: ФИО
+  title: название СРО
+  srosType: Тип СРО
+  region: Регион
+
+users_add_form:
+  region: Регион
+  email: Email
+  login: Имя пользователя
+  password: Пароль
+  name: ФИО
+  permissions: Права
+  skills: Квалификации
+  position: Должность
+  grounds:  Действует на основании
+  phone: Телефон
+
+change_company:
+  region: Регион
+  inn: ИНН
+  kpp: КПП
+  ogrn: ОГРН
+  name: Название компании
+  title: Полное наименование
+  position: Должность
+  grounds:  Действует на основании
+  email: Email
+  phone: Телефон
+  skills: Квалификации
+  userName: ФИО
+
+accounts_add_form:
+  money: Количество денег
+  comment: Комментарий
+
+companies_block_form:
+  comment: Комментарий
+
+create_news_form:
+  title: Заголовок
+  text: Текст
+  show: Кому показывать
+  emailRepeat: Дублировать на email
+
+trade_clarifications_form:
+  subject: Тема
+  body: Текст сообщения
+
+trade_searchauction_form:
+  code: Код торгов
+  title: Название торгов
+  region: Регион
+
+complaints_add_form:
+  text: Текст жалобы
+
+notices:
+  request_for_clarification_sent: Запрос на разъяснение отправлен!
+
+reports_search_form:
+  role: Роль организации при размещении
+  name: Название
+  inn: ИНН
+  region: Регион
+  sro: СРО
+  sroType: Тип деятельности
+  startPeriod: От
+  endPeriod: По
+
+change_tariff_form:
+  cost: Цена
+
+protocol_auction_results_form:
+  placeView: Место рассмотрения
+  datetimeStartView: Дата и время начала рассмотрения
+  datetimeEndView: Дата и время окончания рассмотрения
+  fullName: ФИО
+  position: Должность

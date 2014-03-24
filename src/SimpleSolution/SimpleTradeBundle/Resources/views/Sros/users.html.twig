@@ -1,0 +1,42 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Список пользователей в СРО {{ sro.getContent().getTitle() }}</h2>
+    {% if not user.isGod() %}
+        {% if user.canI('/sros/users/add') %}
+          <a href="{{ url('sros') }}/users/add/{{ sro.getId() }}" class="btn">Добавить</a>
+        {% endif %}
+    {% else %}
+        <a href="{{ url('sros') }}/users/add/{{ sro.getId() }}" class="btn">Добавить</a>
+    {% endif %}
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Логин</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td>
+            {{ user.getId() }}
+          </td>
+          <td>
+            {{ user.getLogin() }}
+          </td>
+          <td>
+            {% if not user.isGod() %}
+              {% if user.canI('/sros/users/remove') %}
+                <a href="{{ url('sros') }}/users/remove/{{ user.getId() }}" onclick="return confirm('Вы действительно хотите удалить пользователя?')">удалить</a>
+              {% endif %}
+            {% else %}
+                <a href="{{ url('sros') }}/users/remove/{{ user.getId() }}" onclick="return confirm('Вы действительно хотите удалить пользователя?')">удалить</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

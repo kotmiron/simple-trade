@@ -1,0 +1,143 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	<h2>Редактирование компании {{ company.getContent().getTitle() }}</h2>
+	<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="cabinetCompaniesChangeCompany">
+	  {{ form_errors(form) }}
+
+	  <fieldset>
+		<legend>Основные сведения</legend>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.name) }}</div>
+            <div class="controls">
+				{{ form_widget(form.name) }}
+				<span class="help-inline">{{ form_errors(form.name) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+				{{ form_widget(form.title) }}
+				<span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+		</div>
+
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.region_id) }}</div>
+            <div class="controls">
+				{{ form_widget(form.region_id) }}
+				<span class="help-inline">{{ form_errors(form.region_id) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.inn) }}</div>
+            <div class="controls">
+				{{ form_widget(form.inn) }}
+				<span class="help-inline">{{ form_errors(form.inn) }}</span>
+            </div>
+		</div>
+
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.kpp) }}</div>
+            <div class="controls">
+				{{ form_widget(form.kpp) }}
+				<span class="help-inline">{{ form_errors(form.kpp) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.ogrn) }}</div>
+            <div class="controls">
+				{{ form_widget(form.ogrn) }}
+				<span class="help-inline">{{ form_errors(form.ogrn) }}</span>
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Сведения о подписчике договора</legend>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.userName) }}</div>
+            <div class="controls">
+				{{ form_widget(form.userName) }}
+				<span class="help-inline">{{ form_errors(form.userName) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.email) }}</div>
+            <div class="controls">
+				{{ form_widget(form.email) }}
+				<span class="help-inline">{{ form_errors(form.email) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.phone) }}</div>
+            <div class="controls">
+				{{ form_widget(form.phone) }}
+				<span class="help-inline">{{ form_errors(form.phone) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.position) }}</div>
+            <div class="controls">
+				{{ form_widget(form.position) }}
+				<span class="help-inline">{{ form_errors(form.position) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.grounds) }}</div>
+            <div class="controls">
+				{{ form_widget(form.grounds) }}
+				<span class="help-inline">{{ form_errors(form.grounds) }}</span>
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Документы</legend>
+        Уже загруженные:<br>
+		{% for file in files %}
+			{% if file['isActive'] %}
+				<div class="control-group" id="file{{ file.id }}">
+					<div class="control-label">{{ file.title }} - {{ file.filename }}</div>
+					<div class="controls">
+						<a href="/uploads/documents/{{ file.filename }}">Скачать</a>
+						<a href="" id="remove{{ file.id }}">Удалить</a>
+					</div>
+				</div>
+				<a href="" id="restore{{ file.id }}" style="display:none">Вернуть<br></a>
+			{% endif %}
+		{% endfor %}
+		<br>
+		добавить новые:
+		<div class="control-group">
+		  <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+			  {% for file in form.files %}
+				  <li>{{ form_row(file.title) }}</li>
+			  {% endfor %}
+		  </ul>
+		</div>
+	</fieldset>
+
+	{{ form_rest(form) }}
+
+	<div class="control-group">
+		<div class="controls">
+			<a href="{{ url('sros_companies') }}">Отмена</a>
+			<input type="submit" value="Сохранить" class="btn" id="save"/>
+		</div>
+	</div>
+  </form>
+
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		formObject.initForm("cabinetCompaniesChangeCompany");
+		formObject.initFiles();
+	});
+</script>
+{% endblock %}

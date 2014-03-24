@@ -1,0 +1,77 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	<b>Просмотр извещения об аукционе {{ auction.getContent().getName() }}</b><br>
+    Номер извещения о проведении аукциона: {{ auction.getContent().getNoticeNumber() }}<br>
+    Краткое название аукциона: {{ auction.getContent().getName() }}<br>
+    Наименование организатора аукциона: {{ auction.getContent().getCompanyName() }}<br>
+    и т.д.
+    <br><br>
+    Информация о стоимости подачи заявки:<br>
+    Название тарифа: {{ tariff.getTitle() }}<br>
+    Стоимость: {{ tariff.getCost() }}<br>
+    <br>
+
+    {% if user.canI('/offers/add') %}
+      {% if user.canI('/requests/complaints/add') %}
+		<a href="{{ url('requests_complaints') }}/add/{{ company.getId() }}">Подать жалобу на компанию</a>
+	  {% endif %}
+	  <br>
+	  {% if auction.getStatus().getName() == 'PUBLIC' %}
+		<input type="button" value="Принять участие" id="add_offer" class="btn"/>
+		<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$('#add_offer').click(function()
+			{
+				if ( parseFloat('{{ money }}') < parseFloat('{{ tariff.getCost() }}') )
+				{
+				  alert('На счету меньше, чем стоит услуга! Пополните баланс');
+				  return false;
+				}
+				else
+				{
+					if (confirm('Услуга подачи заявки стоит {{ tariff.getCost() }} рублей, подтвердите свое желание оформить заявку'))
+					  location.href = "{{ url('offers') }}/add/{{ auction.getId() }}";
+					else
+					  return false;
+				}
+				return false;
+			});
+		});
+		</script>
+	  {% else %}
+		<input type="button" value="Принять участие" id="add_offer" class="btn" disabled="disabled"/>
+		Аукцион не опубликован
+	  {% endif %}
+    {% endif %}
+
+	{% if user.canI('/offers') %}
+		<div class="clear"></div>
+		<br><h3>Список заявок на аукцион:</h3>
+		 <table class="info-list-table table table-striped table-hover">
+		  <thead>
+			  <tr>
+				<th width="6%">ID</th>
+				<th width="20%">От кого</th>
+				<th width="20%">Статус</th>
+				<th>Действия</th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			{% for offer in offers %}
+			<tr>
+				<td>{{ offer.getId() }}</td>
+				<td>{{ offer.getCompany().getContent().getEmail() }}</td>
+				<td>{{ offer.getStatus().getTitle() }}</td>
+				<td>{% if user.canI('/offers/show') %}
+						<a href="{{ path('offers_show', {'id': offer.getId()}) }}">Посмотреть</a>
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+{% endblock %}

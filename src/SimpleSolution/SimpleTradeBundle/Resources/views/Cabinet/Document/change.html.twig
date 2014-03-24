@@ -1,0 +1,32 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2><a href="{{ url('cabinet') }}">Личный кабинет</a> » Редактирование документа </h2>
+
+  <form action="" method="post" {{ form_enctype(form) }} class="form-horizontal">
+	  {{ form_errors(form) }}
+
+	  <fieldset>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+				{{ form_widget(form.title) }}
+				<span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+		</div>
+
+	</fieldset>
+
+
+
+	{{ form_rest(form) }}
+
+	<div class="control-group">
+		<div class="controls">
+			<a href="{{ url('cabinet') }}">Отмена</a> 
+			<input type="submit" value="Сохранить" class="btn" />
+		</div>
+	</div>
+  </form>
+{% endblock %}

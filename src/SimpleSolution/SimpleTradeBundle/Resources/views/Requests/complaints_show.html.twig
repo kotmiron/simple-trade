@@ -1,0 +1,43 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Просмотр жалобы на компанию {{ company.getContent().getTitle() }}
+
+	<fieldset>
+		<legend>Текст</legend>
+		<div class="control-group">
+            <div class="controls">
+				{{ requestComplaints.getText() }}
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Документы</legend>
+        Уже загруженные:<br>
+		{% for file in files %}
+			{% if file['isActive'] %}
+				<div class="control-group">
+					<div class="control-label">{{ file.title }} - {{ file.filename }}</div>
+					<div class="controls">
+						<a href="/uploads/documents/{{ file['filename'] }}">Скачать</a>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</fieldset>
+
+	<br>
+	<a href="{{ url('requests') }}/complaints">Назад</a>
+	<br>
+	{% if request.getStatus().getName() == 'NEW' %}
+		{% if user.canI('/requests/complaints/approve') %}
+		  <a href="{{ url('requests') }}/complaints/approve/{{ request.getId() }}">Подтвердить</a>
+		{% endif %}
+		<br>
+		{% if user.canI('/requests/complaints/reject') %}
+			<a href="{{ url('requests') }}/complaints/reject/{{ request.getId() }}">отклонить (не работает)</a>
+		{% endif %}
+	{% endif %}
+	<br>
+{% endblock %}

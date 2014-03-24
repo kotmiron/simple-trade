@@ -1,0 +1,43 @@
+Transactions:
+    type: entity
+    table: transactions
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        createdAt:
+            type: datetime
+            nullable: false
+            column: created_at
+        actionName:
+            type: string
+            length: 128
+            fixed: false
+            nullable: false
+            column: action_name
+        actionTable:
+            type: string
+            length: 45
+            fixed: false
+            nullable: false
+            column: action_table
+        actionId:
+            type: integer
+            unsigned: false
+            nullable: false
+            column: action_id
+    manyToOne:
+        session:
+            targetEntity: Sessions
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                session_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

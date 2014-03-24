@@ -1,0 +1,153 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		{% if app.user.canI('/trade/notice') %}
+		<li><a href="{{ path('trade_notice', {'id': auction.getId()}) }}">Извещение о проведении электронного аукциона</a></li>
+		{% endif %}
+		<li class="active"><a>Разъяснения к аукциону</a></li>
+		{% if auction.getContent().getTradingForm().getName() == 'AUCTION' %}
+		{% if app.user.canI('/trade/offer') %}
+		<li><a href="{{ path('trade_offer', {'id': auction.getId()}) }}">Моя заявка на участие</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/offers') %}
+		<li><a href="{{ path('trade_offers', {'id': auction.getId()}) }}">Заявки на участие</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/room') %}
+		<li><a href="{{ path('trade_room', {'id': auction.getId()}) }}">Аукционный зал</a></li>
+		{% endif %}
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/results/answer') %}
+		<li><a href="{{ path('trade_clarifications_results_answer', {'id': auction.getId()}) }}">Разьяснения результатов</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId()} %}
+
+{% if app.user.canI('/trade/clarifications/auction/request/add') %}
+
+<h3>Запрос: Компания {{ user_company.getContent.getTitle }}</h3>
+
+<form action="{{ path('trade_clarifications_auction_request', {'id': auction.getId()}) }}" method="post" {{ form_enctype(form) }}>
+	  {{ form_errors(form) }}
+	  <div>
+		{{ form_label(form.subject) }}
+		{{ form_errors(form.subject) }}
+		{{ form_widget(form.subject) }}
+	</div>
+	<div>
+		{{ form_label(form.body) }}
+		{{ form_errors(form.body) }}
+		{{ form_widget(form.body) }}
+	</div>
+	<fieldset>
+		<legend>Добавить файл</legend>
+		<div class="control-group">
+			<ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+				{% for file in form.files %}
+				<li>{{ form_widget(file) }}</li>{{ form_errors(form.body) }}
+				{% endfor %}
+			</ul>
+		</div>
+	</fieldset>
+	<input type="submit" value="Отправить запрос"  class="btn"/>
+	{{ form_rest(form) }}
+</form>
+{% endif %}
+
+<h3>Запросы других участников:</h3>
+{% for value in all_clarifications %}
+	<b>Запрос:</b><br>
+	Компания {{ value.request.company.getContent.getTitle }}<br>
+	Тема: {{ value.request.request.getContent.getSubject }}<br>
+	Текст сообщения: {{ value.request.request.getContent.getBody }}<br>
+	{% if value.request.documents | length > 0 %}
+		Документы:
+		<br>
+		{% for document in value.request.documents %}
+			{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+			<a href="{{ path('trade_clarification_get_doc', {'id': value.request.request.getId, 'idFile': document.getContent.getId}) }}" target="_blank">
+				Скачать
+			</a>
+			<br>
+		{% endfor %}
+	{% endif %}
+	<br>
+	<b>Ответ:</b>
+	<br>
+	{% if value.answer %}
+		Компания {{ value.answer.company.getContent.getTitle }}<br>
+		Текст сообщения: {{ value.answer.answer.getContent.getBody }}<br>
+		{% if value.answer.documents | length > 0 %}
+			Документы:
+			<br>
+			{% for document in value.answer.documents %}
+				{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+				<a href="{{ path('trade_clarification_get_doc', {'id': value.answer.answer.getId, 'idFile': document.getContent.getId}) }}" target="_blank">
+					Скачать
+				</a>
+				<br>
+			{% endfor %}
+		{% endif %}
+	{% else %}
+		нет ответа
+		<br>
+		{% if app.user.canI('/trade/clarifications/auction/answer') %}
+			<a href="#" id="answer" request="{{ value.request.request.getId }}">Ответить</a>
+			<form request="{{ value.request.request.getId }}" action="{{ path('trade_clarifications_auction_answer', {'id': value.request.request.getId}) }}" method="post" {{ form_enctype(formAnswer) }} style="display:none">
+				{{ form_errors(formAnswer) }}
+				<div>
+					{{ form_label(formAnswer.body) }}
+					{{ form_errors(formAnswer.body) }}
+					{{ form_widget(formAnswer.body) }}
+				</div>
+				<fieldset>
+					<legend>Добавить файл</legend>
+					<div class="control-group">
+						<ul class="files" data-prototype="{{ form_widget(formAnswer.files.vars.prototype)|e }}">
+							{% for file in formAnswer.files %}
+							<li>{{ form_widget(file) }}</li>{{ form_errors(formAnswer.body) }}
+							{% endfor %}
+						</ul>
+					</div>
+				</fieldset>
+				<a href="#" id="hide" request="{{ value.request.request.getId }}">Свернуть</a>
+				<input type="submit" value="Ответить"  class="btn"/>
+
+				{{ form_rest(formAnswer) }}
+			</form>
+		{% endif %}
+	{% endif %}
+	<br>
+
+	<hr><br>
+	{% else %}
+	нет запросов
+{% endfor %}
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#answer').click(function()
+		{
+			var request = $(this).attr('request');
+			$('form[request="' + request + '"]').show();
+			$(this).hide();
+			return false;
+		});
+
+		$('#hide').click(function()
+		{
+			var request = $(this).attr('request');
+			$('form[request="' + request + '"]').hide();
+			$('#answer[request="' + request + '"]').show();
+			return false;
+		});
+	});
+</script>
+
+{% endblock %}
+

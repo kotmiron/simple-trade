@@ -1,0 +1,47 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Список пользователей в компании {{ company.getContent().getName() }}</h2>
+	{% if app.user.canI('/users/add') %}
+		<a href="{{ url('users') }}/add/{{ company.getId() }}" class="btn">Добавить</a>
+	{% endif %}
+
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Логин</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td>
+            {{ user.getId() }}
+          </td>
+          <td>
+            {{ user.getLogin() }}
+          </td>
+          <td>
+			{% if app.user.canI('/users/change') %}
+				<a href="{{ url('users') }}/change/{{ user.getId() }}">изменить</a>
+			{% endif %}
+			{% if user.isBlocked() %}
+				{% if app.user.canI('/users/unblock') %}
+					<a href="{{ url('users') }}/unblock/{{ user.getId() }}">разблокировать</a>
+				{% endif %}
+			{% else %}
+				{% if app.user.canI('/users/block') %}
+					<a href="{{ url('users') }}/block/{{ user.getId() }}">блокировать</a>
+				{% endif %}
+			{% endif %}
+			{% if app.user.canI('/users/remove') %}
+				<a href="{{ url('users') }}/remove/{{ user.getId() }}">удалить</a>
+			{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

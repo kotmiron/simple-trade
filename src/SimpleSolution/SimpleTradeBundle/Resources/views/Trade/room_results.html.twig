@@ -1,0 +1,288 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+    <script src="{{ asset('js/bootstrap.min.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/jquery-ui.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui-custom.css') }}" />
+{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		{% if app.user.canI('/trade/notice') %}
+		<li><a href="{{ path('trade_notice', {'id': auction.getId() }) }}">Извещение о проведении электронного аукциона</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/auction/request') %}
+		<li><a href="{{ path('trade_clarifications_auction_request', {'id': auction.getId() }) }}">Разъяснения к аукциону</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/offer') %}
+		<li><a href="{{ path('trade_offer', {'id': auction.getId() }) }}">Моя заявка на участие</a></li>
+		{% endif %}
+		<li class="active"><a>Аукционный зал</a></li>
+		{% if app.user.canI('/trade/clarifications/results/answer') %}
+		<li><a href="{{ path('trade_clarifications_results_answer', {'id': auction.getId() }) }}">Разьяснения результатов</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId() } %}
+
+Протокол подведения итогов<br><br>
+{% if protocol %}
+<div style="border: #000000 solid 1px; padding: 15px;">
+	{% if auction.getCompany != user_company %}
+	<div align="right"><a href="{{ url('requests_complaints') }}/add/{{ auction.getCompany.getId() }}">Подать жалобу на компанию {{ auction.getCompany.getContent().getTitle() }}</a></div>
+    {% endif %}
+	Место разьяснения: {{ protocol.protocol.getContent.getPlaceView }}<br>
+	Дата и время начала рассмотрения: {{ protocol.protocol.getContent.getDatetimeStartView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	Дата и время окончания рассмотрения: {{ protocol.protocol.getContent.getDatetimeEndView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	<br>
+	<b>Состав единой комиссии:</b><br><br>
+	{{ protocol.protocol.getContent.getFullName1 }}, {{ protocol.protocol.getContent.getPosition1 }}<br>
+	{{ protocol.protocol.getContent.getFullName2 }}, {{ protocol.protocol.getContent.getPosition2 }}<br>
+	{{ protocol.protocol.getContent.getFullName3 }}, {{ protocol.protocol.getContent.getPosition3 }}<br>
+
+	<br>
+	<b>Итоги аукциона:</b><br><br>
+	<table border="1" style="width: 400px;">
+		<tr>
+			<td>Название компании-подрядчика</td>
+			<td>Места по результатам торгов</td>
+		</tr>
+		{% for value in protocol.protocol.getContent.getCompanyValues %}
+		<tr>
+			<td>{{ value.getCompany.getContent.getTitle }}</td>
+			<td>{{ value.getValue }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<br><br>
+	<b>Приложенные документы</b>
+	<br>
+	{% for document in protocol.documents %}
+		{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+		<a href="{{ path('trade_protocols_get_doc', {'id': protocol.protocol.getId(), 'idFile': document.getId()}) }}" target="_blank">
+			Скачать
+		</a>
+		<br>
+	{% endfor %}
+
+	{% if clarification_form %}
+	<div align="right"><input id="request_clarifications_id" type="button" value="Запросить разьяснение по итогам торгов" /></div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#request_clarifications_id').click(function(){
+                $('#myModal').modal('show');
+			});
+		});
+    </script>
+	{% endif %}
+
+</div>
+{% elseif protocol_form %}
+<div style="border: #000000 solid 1px; padding: 15px;">
+	<form id="protocol_form_id" action="" method="post" {{ form_enctype(protocol_form) }}>
+		{{ form_errors(protocol_form) }}
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.placeView) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.placeView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.placeView) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.datetimeStartView) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.datetimeStartView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.datetimeStartView) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.datetimeEndView) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.datetimeEndView) }}
+				<span class="help-inline">{{ form_errors(protocol_form.datetimeEndView) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.fullName1) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.fullName1) }}
+				<span class="help-inline">{{ form_errors(protocol_form.fullName1) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.position1) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.position1) }}
+				<span class="help-inline">{{ form_errors(protocol_form.position1) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.fullName2) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.fullName2) }}
+				<span class="help-inline">{{ form_errors(protocol_form.fullName2) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.position2) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.position2) }}
+				<span class="help-inline">{{ form_errors(protocol_form.position2) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.fullName3) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.fullName3) }}
+				<span class="help-inline">{{ form_errors(protocol_form.fullName3) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(protocol_form.position3) }}</div>
+            <div class="controls">
+				{{ form_widget(protocol_form.position3) }}
+				<span class="help-inline">{{ form_errors(protocol_form.position3) }}</span>
+            </div>
+		</div>
+
+		<br>
+		<table border="1" style="width: 400px;">
+			<tr>
+				<td>Название компании-подрядчика</td>
+				<td>Места по результатам торгов</td>
+				<td>Действия</td>
+			</tr>
+			{% for value in results %}
+			<tr>
+				<td>{{ value['bid'].getCompany.getContent.getTitle }}</td>
+				<td>{{ value.position }}</td>
+				<td>
+					<a href="{{ url('requests_complaints') }}/add/{{ value['bid'].getCompany().getId() }}">Подать жалобу</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+        </br>
+
+	    <fieldset>
+		    <legend>Документы</legend>
+            <div class="p20">
+			    <b>Добавить новые:</b>
+			    <div class="control-group">
+			      <ul class="files" data-prototype="{{ form_widget(protocol_form.files.vars.prototype)|e }}">
+				      {% for file in protocol_form.files %}
+					      <li>{{ form_row(file.title) }}</li>
+				      {% endfor %}
+			      </ul>
+			    </div>
+		    </div>
+	    </fieldset>
+<script type="text/javascript">
+	$(document).ready(function() {
+        $('#protocol_datetimeStartView').datetimepicker({ dateFormat: 'dd-mm-yy' });
+        $('#protocol_datetimeEndView').datetimepicker({ dateFormat: 'dd-mm-yy' });
+	});
+</script>
+
+		<input type="submit" value="Опубликовать протокол" />
+
+		{{ form_rest(protocol_form) }}
+	</form>
+</div>
+{% endif %}
+
+{% if clarification %}
+<br><br>
+Запрос разьяснения итогов аукциона:<br><br>
+
+	<div  style="border: #000000 solid 1px; padding: 10px;">
+        <b>Запрос:</b><br>
+        {{ clarification.request.request.getCreatedAt|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+        Текст сообщения: {{ clarification.request.request.getContent.getBody }}<br>
+	</div>
+	{% if clarification.answer.answer %}
+	<div  style="border: #000000 solid 1px; padding: 10px;">
+        <b>Ответ:</b><br>
+
+	    Администратор площадки, {{ clarification.answer.answer.getCreatedAt|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	    Текст сообщения: {{ clarification.answer.answer.getContent.getBody }}<br>
+		{% if clarification.answer.documents | length > 0 %}
+			Документы:
+			<br>
+			{% for document in clarification.answer.documents %}
+				{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+				<a href="{{ path('trade_clarification_get_doc', {'id': clarification.answer.answer.getId, 'idFile': document.getContent.getId}) }}" target="_blank">
+					Скачать
+				</a>
+				<br>
+			{% endfor %}
+		{% endif %}
+    </div>
+	{% endif %}
+
+{% endif %}
+
+<br><br>
+
+История аукциона:<br><br>
+<table border="1">
+    <tr>
+		<td>Победитель</td>
+		<td>Время подачи предложения</td>
+		<td>Предложенная цена</td>
+		<td>Участники</td>
+		<td>Компания</td>
+    </tr>
+	{% for value in history %}
+    <tr>
+		<td>{% if value.is_winner %}X{% endif %}</td>
+		<td>{{ value.bid.getBidTime|date("d.m.Y, H:i:s", 'Europe/Moscow') }}</td>
+		<td>{{ value.bid.getBestPrice }}</td>
+		<td>Участник {{ value['user_number'] }}</td>
+		<td>{{ value['bid'].getCompany.getContent.getTitle }}</td>
+    </tr>
+	{% endfor %}
+</table>
+
+{% if clarification_form %}
+<div id="myModal" class="modal" style="display: none;">
+	<form action="" method="post">
+		{{ form_errors(clarification_form) }}
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Запрос разъяснения результатов аукциона</h3>
+		</div>
+		<div class="modal-body">
+			<br>
+			<p>{{ form_label(clarification_form.body) }}</p>
+			{{ form_widget(clarification_form.body) }}
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn">Да</button>
+			<button class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+		</div>
+		{{ form_rest(clarification_form) }}
+	</form>
+</div>
+{% endif %}
+
+{% endblock %}

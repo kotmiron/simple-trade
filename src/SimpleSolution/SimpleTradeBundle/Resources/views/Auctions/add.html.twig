@@ -1,0 +1,306 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+    <script src="{{ asset('js/jquery-ui.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block custom_css %}
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui-custom.css') }}" />
+{% endblock %}
+
+{% block body %}
+    <h2>Создание аукциона</h2>
+    <form action="" method="post" {{ form_enctype(form) }} id="auctionsAdd">
+        {{ form_errors(form) }}
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.regionId) }}</div>
+            <div class="controls">
+				{{ form_widget(form.regionId) }}
+				<span class="help-inline">{{ form_errors(form.regionId) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.currencyId) }}</div>
+            <div class="controls">
+				{{ form_widget(form.currencyId) }}
+				<span class="help-inline">{{ form_errors(form.currencyId) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.tradingFormId) }}</div>
+            <div class="controls">
+				{{ form_widget(form.tradingFormId) }}
+				<span class="help-inline">{{ form_errors(form.tradingFormId) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.internetAddress) }}</div>
+            <div class="controls">
+				{{ form_widget(form.internetAddress) }}
+				<span class="help-inline">{{ form_errors(form.internetAddress) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+				{{ form_widget(form.title) }}
+				<span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.noticeLink) }}</div>
+            <div class="controls">
+				{{ form_widget(form.noticeLink) }}
+				<span class="help-inline">{{ form_errors(form.noticeLink) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.noticePrintform) }}</div>
+            <div class="controls">
+				{{ form_widget(form.noticePrintform) }}
+				<span class="help-inline">{{ form_errors(form.noticePrintform) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.nomenclature) }}</div>
+            <div class="controls">
+				{{ form_widget(form.nomenclature) }}
+				<span class="help-inline">{{ form_errors(form.nomenclature) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.companyName) }}</div>
+            <div class="controls">
+				{{ form_widget(form.companyName) }}
+				<span class="help-inline">{{ form_errors(form.companyName) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.mail) }}</div>
+            <div class="controls">
+				{{ form_widget(form.mail) }}
+				<span class="help-inline">{{ form_errors(form.mail) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.email) }}</div>
+            <div class="controls">
+				{{ form_widget(form.email) }}
+				<span class="help-inline">{{ form_errors(form.email) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.phones) }}</div>
+            <div class="controls">
+				{{ form_widget(form.phones) }}
+				<span class="help-inline">{{ form_errors(form.phones) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.name) }}</div>
+            <div class="controls">
+				{{ form_widget(form.name) }}
+				<span class="help-inline">{{ form_errors(form.name) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.contactName) }}</div>
+            <div class="controls">
+				{{ form_widget(form.contactName) }}
+				<span class="help-inline">{{ form_errors(form.contactName) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="auction" class="control-group">
+            <div class="control-label">{{ form_label(form.startPrice) }}</div>
+            <div class="controls">
+				{{ form_widget(form.startPrice) }}
+				<span class="help-inline">{{ form_errors(form.startPrice) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="auction" class="control-group">
+            <div class="control-label">{{ form_label(form.endPrice) }}</div>
+            <div class="controls">
+				{{ form_widget(form.endPrice) }}
+				<span class="help-inline">{{ form_errors(form.endPrice) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.deliverySize) }}</div>
+            <div class="controls">
+				{{ form_widget(form.deliverySize) }}
+				<span class="help-inline">{{ form_errors(form.deliverySize) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.deliveryPlace) }}</div>
+            <div class="controls">
+				{{ form_widget(form.deliveryPlace) }}
+				<span class="help-inline">{{ form_errors(form.deliveryPlace) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.deliveryPeriod) }}</div>
+            <div class="controls">
+				{{ form_widget(form.deliveryPeriod) }}
+				<span class="help-inline">{{ form_errors(form.deliveryPeriod) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.info) }}</div>
+            <div class="controls">
+				{{ form_widget(form.info) }}
+				<span class="help-inline">{{ form_errors(form.info) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="auction" class="control-group">
+            <div class="control-label">{{ form_label(form.endOffer) }}</div>
+            <div class="controls">
+				{{ form_widget(form.endOffer) }}
+				<span class="help-inline">{{ form_errors(form.endOffer) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="auction" class="control-group">
+            <div class="control-label">{{ form_label(form.endConsideration) }}</div>
+            <div class="controls">
+				{{ form_widget(form.endConsideration) }}
+				<span class="help-inline">{{ form_errors(form.endConsideration) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="auction" class="control-group">
+            <div class="control-label">{{ form_label(form.startAuction) }}</div>
+            <div class="controls">
+				{{ form_widget(form.startAuction) }}
+				<span class="help-inline">{{ form_errors(form.startAuction) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="request_proposals" class="control-group">
+            <div class="control-label">{{ form_label(form.placeToAcceptOffers) }}</div>
+            <div class="controls">
+				{{ form_widget(form.placeToAcceptOffers) }}
+				<span class="help-inline">{{ form_errors(form.placeToAcceptOffers) }}</span>
+            </div>
+		</div>
+
+		<div type_of_trades="request_proposals" class="control-group">
+            <div class="control-label">{{ form_label(form.datetimeToAcceptOffers) }}</div>
+            <div class="controls">
+				{{ form_widget(form.datetimeToAcceptOffers) }}
+				<span class="help-inline">{{ form_errors(form.datetimeToAcceptOffers) }}</span>
+            </div>
+		</div>
+
+	    <fieldset>
+		    <legend>Документы</legend>
+            <div class="p20">
+			    <b>Добавить новые:</b>
+			    <div class="control-group">
+			      <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+				      {% for file in form.files %}
+					      <li>{{ form_row(file.title) }}</li>
+				      {% endfor %}
+			      </ul>
+			    </div>
+		    </div>
+	    </fieldset>
+
+        <div class="control-label"><a href="" id="show_skills"><span><b>Квалификации</b></span> <i class="icon-plus-sign"></i></a></div>
+        <div id="skills" style="display:none">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Квалификация</th>
+                        <th>Основная</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for parent_id, parent in skills %}
+                    <tr type="{{ parent['type'] }}" class="skills_type">
+                        <td colspan="3">
+                          <label><input type="checkbox" id="cat_parent{{ parent_id }}" parent="" value="/" class="validate[required]" name="group1">{{ parent['title'] }}</label>
+                        </td>
+                    </tr>
+                    {% for id, skill in parent['skills'] %}
+                        <tr type="{{ parent['type'] }}" class="skills_type">
+                            <td></td>
+                            <td>
+                               <label><input type="checkbox" id="cat_child{{ id }}" parent="cat_parent{{ parent_id }}" value="/" class="validate[required]" name="group1">{{ skill }}</label>
+                            </td>
+                            <td class="c">
+                                <input type="checkbox" class="attribute" obj="main" parent="{{ id }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    <br><input type="submit" value="Создать" id="submit" class="but fleft"/>
+    <div class="clear"></div>
+	{{ form_rest(form) }}
+  </form>
+
+
+<script type="text/javascript">
+$(document).ready(function()
+{
+    formObject.initForm("auctionsAdd");
+
+    {% for parent in skills %}
+        {% for id, skill in parent['skills'] %}
+            skills[{{ id }}] = new Array();
+            skills[{{ id }}]["main"] = 0;
+            skills[{{ id }}]["dangerous"] = 0;
+        {% endfor %}
+    {% endfor %}
+
+    $('#auctionsAdd_endOffer').datetimepicker({ dateFormat: 'dd-mm-yy' });
+    $('#auctionsAdd_endConsideration').datetimepicker({ dateFormat: 'dd-mm-yy' });
+    $('#auctionsAdd_startAuction').datetimepicker({ dateFormat: 'dd-mm-yy' });
+	$('#auctionsAdd_datetimeToAcceptOffers').datetimepicker({ dateFormat: 'dd-mm-yy' });
+
+	$('#auctionsAdd_tradingFormId').change(function(){
+		var val = $(this).val();
+        switch (val) {
+            case '1':
+				// Аукцион
+				$('div[type_of_trades="request_proposals"]').hide();
+                $('div[type_of_trades="auction"]').show();
+                break;
+            case '2':
+				// Запрос предложений
+				$('div[type_of_trades="auction"]').hide();
+                $('div[type_of_trades="request_proposals"]').show();
+                break;
+            default:
+                alert('Ошибка!');
+        }
+	}).change();
+});
+</script>
+{% endblock %}

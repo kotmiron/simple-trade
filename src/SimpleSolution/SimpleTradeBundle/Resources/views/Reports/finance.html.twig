@@ -1,0 +1,188 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+<script src="{{ asset('js/jquery-ui.js') }}" type="text/javascript" charset="utf-8"></script>
+<script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/jquery-ui-custom.css') }}" />
+{% endblock %}
+
+{% block body %}
+<h2><a href="{{ url('reports') }}">Отчеты</a> » Финансовый отчет </h2>
+
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+		<form action="{{ path('reports_finance') }}" method="post" {{ form_enctype(form) }} id="form">
+			  {{ form_errors(form) }}
+			  <div>
+				{{ form_label(form.role) }}
+				{{ form_errors(form.role) }}
+				{{ form_widget(form.role) }}
+			</div>
+			<div style="display:none">
+				{{ form_label(form.sro) }}
+				<select id="sro">
+					<option value=""></option>
+					{% for key, sro in sros %}
+					<option value="" disabled>{{ key }}</option>
+					{% for id, item in sro %}
+					<option value="{{ id }}" type="{{ item['type'] }}">&nbsp&nbsp&nbsp&nbsp{{ item['title'] }}</option>
+					{% endfor %}
+					{% endfor %}
+				</select>
+				{{ form_errors(form.sro) }}
+			</div>
+			<div style="display:none">
+				{{ form_label(form.sroType) }}
+				{{ form_errors(form.sroType) }}
+				{{ form_widget(form.sroType) }}
+			</div>
+			<div style="display:none">
+				{{ form_label(form.region) }}
+				{{ form_errors(form.region) }}
+				{{ form_widget(form.region) }}
+			</div>
+			<div>
+				{{ form_label(form.name) }}
+				{{ form_errors(form.name) }}
+				{{ form_widget(form.name) }}
+			</div>
+			<div>
+				{{ form_label(form.inn) }}
+				{{ form_errors(form.inn) }}
+				{{ form_widget(form.inn) }}
+			</div>
+			<div>
+				{{ form_label(form.startPeriod) }}
+				{{ form_errors(form.startPeriod) }}
+				{{ form_widget(form.startPeriod) }}
+			</div>
+			<div>
+				{{ form_label(form.endPeriod) }}
+				{{ form_errors(form.endPeriod) }}
+				{{ form_widget(form.endPeriod) }}
+			</div>
+			{{ form_rest(form) }}
+			<br>
+			<input type="submit" value="Найти" class="btn" id="find" />
+			<input type="submit" value="Скачать отчет в pdf" class="btn" id="download" />
+		</form>
+		<table class="info-list-table table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Дата</th>
+					<th>Название компании</th>
+					<th>Пользователь</th>
+					<th>Договор</th>
+					<th>Вид услуги</th>
+					<th>Тип</th>
+					<th>Комментарий</th>
+					<th>Сумма</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for account in accounts %}
+				<tr>
+					<td>
+						{{ account.getCreatedAt() | date("d.m.Y H:i", "Europe/Moscow") }}
+					</td>
+					<td>
+						{{ account.getCompany().getContent().getTitle() }}
+					</td>
+					<td>
+						{% if account.getUser() %}
+							{{ account.getUser().getLogin() }}
+						{% endif %}
+					</td>
+					<td>
+						--
+					</td>
+					<td>
+						{% if account.getContent().getTariff() %}
+							{{ account.getContent().getTariff().getTitle() }}
+						{% endif %}
+					</td>
+					<td>
+						{{ account.getType().getTitle() }}
+					</td>
+					<td>
+						{{ account.getContent().getComment() }}
+					</td>
+					<td>
+						{{ account.getContent().getChanges() }}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+    </ul>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		$('#reportsSearchFinance_startPeriod').datepicker({ dateFormat: 'dd-mm-yy' });
+		$('#reportsSearchFinance_endPeriod').datepicker({ dateFormat: 'dd-mm-yy' });
+
+		var root = $('form').attr('action').replace('reports/finance', '');
+		var dowloadAction = root + 'reports/finance/download';
+		var findAction = root + 'reports/finance';
+
+		$('#download').click(function()
+		{
+			$('#form').attr('action', dowloadAction);
+			$('#form').attr('target', '_blank');
+		});
+
+		$('#find').click(function()
+		{
+			$('#form').attr('action', findAction);
+			$('#form').removeAttr('target');
+		});
+
+		$('#reportsSearchFinance_role').change(function()
+		{
+			var role = $('#reportsSearchFinance_role option:selected').val();
+			if (role == 'PERFORMER')
+			{
+				$('#sro').closest('div').show();
+				$('#reportsSearchFinance_sroType').closest('div').show();
+				$('#reportsSearchFinance_region').closest('div').show();
+			}
+			else
+			{
+				$('#sro').closest('div').hide();
+				$('#reportsSearchFinance_sroType').closest('div').hide();
+				$('#reportsSearchFinance_region').closest('div').hide();
+				$('#reportsSearchFinance_sro').val('');
+				$('#sro').val(0);
+				$('#reportsSearchFinance_sroType').val(0);
+				$('#reportsSearchFinance_region').val(0);
+			}
+			return false;
+		});
+		$('#sro').change(function()
+		{
+			$('#reportsSearchFinance_sro').val($(this).val());
+		});
+
+		if ($('#reportsSearchFinance_role option:selected').val() == 'PERFORMER')
+		{
+			$('#sro').closest('div').show();
+			$('#reportsSearchFinance_sroType').closest('div').show();
+			$('#reportsSearchFinance_region').closest('div').show();
+		}
+		if ($('#reportsSearchFinance_sro').val())
+		{
+			$('#sro').val($('#reportsSearchFinance_sro').val());
+		}
+		else
+		{
+			$('#sro').val(0);
+		}
+
+	});
+</script>
+{% endblock %}

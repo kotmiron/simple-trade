@@ -1,0 +1,87 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Список всех аукционов в системе</h2>
+    {% if not user.isGod() %}
+      {% if user.canI('/auctions/add') %}
+        <a href="" class="btn" id="add_auction">Создать аукцион</a>
+		<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$('#add_auction').click(function()
+			{
+				if ( parseFloat('{{ money }}') < parseFloat('{{ tariff.getCost() }}') )
+				{
+				  alert('На счету меньше, чем стоит услуга! Пополните баланс');
+				  return false;
+				}
+				else
+				{
+					if (confirm('Услуга создания аукциона стоит {{ tariff.getCost() }} рублей, подтвердите свое желание создать аукцион'))
+					  location.href = "{{ url('auctions') }}/add";
+					else
+					  return false;
+				}
+				return false;
+			});
+		});
+		</script>
+      {% endif %}
+    {% endif %}
+
+   {% if user.canI('/offers/company') %}
+      <a href="{{ url('offers_company') }}" class="btn">Мои заявки на аукционы</a>
+   {% endif %}
+
+   <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="20%">Название</th>
+            <th width="30%">Статус</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for auction in auctions %}
+        <tr>
+          <td>
+            {{ auction.getId() }}
+          </td>
+          <td>
+            {{ auction.getContent().getTitle() }}
+          </td>
+          <td>
+            {{ auction.getStatus().getTitle() }}
+          </td>
+          <td>
+            {% if not user.isGod() %}
+              {% if auction.getStatus().getName() == 'PRE_PUBLIC' %}
+                {% if user.canI('/auctions/approve') %}
+                  <a href="{{ url('auctions') }}/approve/{{ auction.getId() }}">одобрить публикацию</a>
+                {% endif %}
+                {% if user.canI('/auctions/reject') %}
+                  <a href="{{ url('auctions') }}/reject/{{ auction.getId() }}">отклонить публикацию</a>
+                {% endif %}
+              {% endif %}
+              {% if user.canI('/auctions/show') %}
+                <a href="{{ url('auctions') }}/show/{{ auction.getId() }}">просмотреть</a>
+              {% endif %}
+              {% if user.canI('/auctions/remove', auction, 'remove') %}
+                <a href="{{ url('auctions') }}/remove/{{ auction.getId() }}">удалить</a>
+              {% endif %}
+              {% if user.canI('/auctions/change', auction.getId(), 'change') %}
+                <a href="{{ url('auctions') }}/change/{{ auction.getId() }}">изменить</a>
+              {% endif %}
+
+            {% else %} {# for god #}
+                <a href="auctions/approve/{{ auction.getId() }}">одобрить публикацию</a>
+                <a href="auctions/reject/{{ auction.getId() }}">отклонить публикацию</a>
+                <a href="auctions/show/{{ auction.getId() }}">просмотреть</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

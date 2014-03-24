@@ -1,0 +1,77 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Заявки на создание аукциона</h2>
+    <div class="tabbable">
+        <ul class="nav nav-tabs">
+        {% if not user.isGod() %}
+          {% if user.canI('/requests/register') %}
+            <li><a href="{{ url('requests') }}/register">Заявки на регистрацию</a></li>
+          {% endif %}
+          {% if user.canI('/requests/skills') %}
+            <li><a href="{{ url('requests') }}/skills">Заявки на повышение квалификации</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/block') %}
+			<li><a href="{{ url('requests') }}/block">Заявки на блокировку компаний</a></li>
+		  {% endif %}
+          {% if user.canI('/requests/auctions') %}
+            <li class="active"><a href="{{ url('requests') }}/auctions">Заявки на создание аукциона</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/sros') %}
+            <li><a href="{{ url('requests') }}/sros">Заявки на вступление в СРО</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/complaints') %}
+            <li><a href="{{ url('requests') }}/complaints">Жалобы на компании</a></li>
+          {% endif %}
+        {% else %}
+          <li><a href="{{ url('requests') }}/register">Заявки на регистрацию</a></li>
+          <li><a href="{{ url('requests') }}/skills">Заявки на повышение квалификации</a></li>
+          <li><a href="{{ url('requests') }}/block">Заявки на блокировку компаний</a></li>
+		  <li><a href="{{ url('requests') }}/auctions">Заявки на создание аукциона</a></li>
+		  <li><a href="{{ url('requests') }}/sros">Заявки на вступление в СРО</a></li>
+		  <li><a href="{{ url('requests') }}/complaints">Жалобы на компании</a></li>
+        {% endif %}
+        </ul>
+    </div>
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="20%">Название</th>
+            <th width="20%">Статус</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for auction in auctions %}
+        <tr>
+          <td>
+            {{ auction.getId() }}
+          </td>
+          <td>
+            {{ auction.getContent().getTitle() }}
+          </td>
+          <td>
+            {{ auction.getStatus().getTitle() }}
+          </td>
+          <td>
+			{% if user.canI('/requests/auctions/show') %}
+				<a href="{{ url('requests') }}/auctions/show/{{ auction.getId() }}">просмотр(не работает)</a>
+			{% endif %}
+			{% if auction.getStatus().getName() == 'PRE_PUBLIC' %}
+				{% if user.canI('/requests/auctions/change') %}
+					<a href="{{ url('requests') }}/auctions/change/{{ auction.getId() }}">изменение(не работает)</a>
+				{% endif %}
+				{% if user.canI('/auctions/approve') %}
+					<a href="{{ url('auctions') }}/approve/{{ auction.getId() }}">подтвердить</a>
+				{% endif %}
+				{% if user.canI('/auctions/reject') %}
+					<a href="{{ url('auctions') }}/reject/{{ auction.getId() }}">отклонить (не работает)</a>
+				{% endif %}
+			{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Отчеты</h2>
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+        {% if user.canI('/reports/finance') %}
+			<li><a href="{{ url('reports') }}/finance">Финансовый отчет</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

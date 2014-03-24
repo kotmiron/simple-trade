@@ -1,0 +1,31 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Список заявок на аукционы</h2>
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Название аукциона</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for offer in offers %}
+        <tr>
+          <td>
+            {{ offer.getId() }}
+          </td>
+          <td>
+            {{ offer.getAuction().getContent().getTitle() }}
+          </td>
+          <td>
+            {% if user.canI('/offers/remove') %}
+              <a href="{{ url('offers') }}/remove/{{ offer.getId() }}">снять заявку</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

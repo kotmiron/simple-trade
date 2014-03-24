@@ -1,0 +1,224 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Редактирование компании {{ company.getContent().getTitle() }}
+  <form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="requestRegisterChange">
+	  {{ form_errors(form) }}
+
+	  <fieldset>
+		<legend>Основные сведения</legend>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.name) }}</div>
+            <div class="controls">
+				{{ form_widget(form.name) }}
+				<span class="help-inline">{{ form_errors(form.name) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+				{{ form_widget(form.title) }}
+				<span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+		</div>
+
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.region_id) }}</div>
+            <div class="controls">
+				{{ form_widget(form.region_id) }}
+				<span class="help-inline">{{ form_errors(form.region_id) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.inn) }}</div>
+            <div class="controls">
+				{{ form_widget(form.inn) }}
+				<span class="help-inline">{{ form_errors(form.inn) }}</span>
+            </div>
+		</div>
+
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.kpp) }}</div>
+            <div class="controls">
+				{{ form_widget(form.kpp) }}
+				<span class="help-inline">{{ form_errors(form.kpp) }}</span>
+            </div>
+		</div>
+
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.ogrn) }}</div>
+            <div class="controls">
+				{{ form_widget(form.ogrn) }}
+				<span class="help-inline">{{ form_errors(form.ogrn) }}</span>
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Сведения о подписчике договора</legend>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.userName) }}</div>
+            <div class="controls">
+				{{ form_widget(form.userName) }}
+				<span class="help-inline">{{ form_errors(form.userName) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.email) }}</div>
+            <div class="controls">
+				{{ form_widget(form.email) }}
+				<span class="help-inline">{{ form_errors(form.email) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.phone) }}</div>
+            <div class="controls">
+				{{ form_widget(form.phone) }}
+				<span class="help-inline">{{ form_errors(form.phone) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.position) }}</div>
+            <div class="controls">
+				{{ form_widget(form.position) }}
+				<span class="help-inline">{{ form_errors(form.position) }}</span>
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">{{ form_label(form.grounds) }}</div>
+            <div class="controls">
+				{{ form_widget(form.grounds) }}
+				<span class="help-inline">{{ form_errors(form.grounds) }}</span>
+            </div>
+		</div>
+	</fieldset>
+
+	<a href="" id="show_skills">Квалификации</a>
+	<div id="skills" style="display:none">
+	<table>
+		<tr>
+			<td>Название</td>
+			<td>Квалификация</td>
+			<td>Основная</td>
+			<td>Опасные объекты</td>
+		</tr>
+	{% for parent_id, parent in skills %}
+		<tr type="{{ parent['type'] }}" class="skills_type">
+			<td>
+			  <input type="checkbox" id="cat_parent{{ parent_id }}" parent="" value="/" class="validate[required]" name="group1">{{ parent['title'] }}
+			</td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		{% for id, skill in parent['skills'] %}
+			<tr type="{{ parent['type'] }}" class="skills_type">
+				<td></td>
+				<td>
+					<input type="checkbox" id="cat_child{{ id }}" parent="cat_parent{{ parent_id }}" value="/" class="validate[required]" name="group1">{{ skill }}
+				</td>
+				<td>
+					<input type="checkbox" class="attribute" obj="main" parent="{{ id }}">
+				</td>
+				<td>
+					<input type="checkbox" class="attribute" obj="dangerous" parent="{{ id }}">
+				</td>
+			</tr>
+		{% endfor %}
+	{% endfor %}
+	</table>
+	</div>
+	{{ form_widget(form.skills) }}
+
+	<fieldset>
+		<legend>Документы</legend>
+        Уже загруженные:<br>
+		{% for file in files %}
+			{% if file['isActive'] %}
+				<div class="control-group" id="file{{ file.id }}">
+					<div class="control-label">{{ file.title }} - {{ file.filename }}</div>
+					<div class="controls">
+						<a href="/uploads/documents/{{ file.filename }}">Скачать</a>
+						<a href="" id="remove{{ file.id }}">Удалить</a>
+					</div>
+				</div>
+				<a href="" id="restore{{ file.id }}" style="display:none">Вернуть<br></a>
+			{% endif %}
+		{% endfor %}
+		<br>
+		добавить новые:
+		<div class="control-group">
+		  <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+			  {% for file in form.files %}
+				  <li>{{ form_row(file.title) }}</li>
+			  {% endfor %}
+		  </ul>
+		</div>
+	</fieldset>
+
+	{{ form_rest(form) }}
+
+	<div class="control-group">
+		<div class="controls">
+			<a href="{{ url('requests') }}/register/show/{{ company.getId() }}">Отмена</a>
+			<input type="submit" value="Сохранить" class="btn" id="submit"/>
+		</div>
+	</div>
+  </form>
+
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		formObject.initForm("requestRegisterChange");
+		formObject.initFiles();
+
+		{% for parent in skills %}
+			{% for id, skill in parent['skills'] %}
+				skills[{{ id }}] = new Array();
+				skills[{{ id }}]["main"] = 0;
+				skills[{{ id }}]["dangerous"] = 0;
+			{% endfor %}
+		{% endfor %}
+
+		var skillsAttributes = $('#requestRegisterChange_attributes').val().split(',');
+		if (skillsAttributes == '')
+			skillsAttributes = new Array();
+		for(var key in skillsAttributes)
+		{
+			var attributes = skillsAttributes[key].split('|');
+			var skillId = attributes[0];
+			var isMain = attributes[1];
+			var isDangerous = attributes[2];
+			var parent = $('#cat_child' + skillId).attr('parent');
+			$('#cat_child' + skillId).attr('checked', 'checked');
+
+			if (isMain == '0')
+			{
+				$('.attribute[parent="' + skillId + '"][obj="main"]').removeAttr('checked');
+				skills[skillId]['main'] = 0;
+			}
+			else
+			{
+				$('.attribute[parent="' + skillId + '"][obj="main"]').attr('checked', 'checked');
+				skills[skillId]['main'] = 1;
+			}
+			if (isDangerous == '0')
+			{
+				$('.attribute[parent="' + skillId + '"][obj="dangerous"]').removeAttr('checked');
+				skills[skillId]['dangerous'] = 0;
+			}
+			else
+			{
+				$('.attribute[parent="' + skillId + '"][obj="dangerous"]').attr('checked', 'checked');
+				skills[skillId]['dangerous'] = 1;
+			}
+
+			$('#' + parent).attr('checked', 'checked');
+		}
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	<h2>Шаблоны документов</h2>
+	{% if create_action %}
+		<a href="{{ path('templates_new') }}" class="btn">Создать</a>
+	{% endif %}
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="20%">Тип</th>
+            <th width="10%">Создан</th>
+            <th width="20%">Заголовок</th>
+            <th>Содержание</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+		{% for entity in entities %}
+			<tr>
+				<td><a href="{{ path('templates_show', { 'id': entity.id }) }}">{{ ('mail.types.' ~ entity.getName())|trans }}</a></td>
+				<td>{% if entity.createdAt %}{{ entity.createdAt|date('Y-m-d H:i:s', 'Europe/Moscow') }}{% endif %}</td>
+				<td>{{ entity.getSubject() }}</td>
+				<td>{{ entity.getBody() }}</td>
+				<td>
+					<a href="{{ path('templates_show', { 'id': entity.id }) }}">посмотреть</a>
+					<br>
+					<a href="{{ path('templates_edit', { 'id': entity.id }) }}">изменить</a>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+    </table>
+{% endblock %}

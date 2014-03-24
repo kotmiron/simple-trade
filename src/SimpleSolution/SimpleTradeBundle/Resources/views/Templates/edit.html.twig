@@ -1,0 +1,46 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+
+<h2>Редактирование шаблона</h2>
+<h3><b>Тип:</b> {{ ('mail.types.' ~ entity.getName())|trans }}</h3>
+
+<form action="{{ path('templates_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }} class="form-horizontal edit-temp">
+    {#{ form_widget(edit_form) }#}
+
+	<div class="control-group">
+		<div class="control-label">{{ form_label(edit_form.subject) }}</div>
+		<div class="controls">
+			{{ form_widget(edit_form.subject) }}
+			<span class="help-inline">{{ form_errors(edit_form.subject) }}</span>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">{{ form_label(edit_form.body) }}</div>
+		<div class="controls">
+			{{ form_widget(edit_form.body) }}
+			<span class="help-inline">{{ form_errors(edit_form.body) }}</span>
+		</div>
+	</div>
+
+	{{ form_rest(edit_form) }}
+
+    <div class="control-group">
+		<div class="control-label"> </div>
+		<div class="controls">
+			<button type="submit" class="btn">Сохранить</button>
+		</div>
+	</div>
+</form>
+
+<div class="record_actions">
+	<a href="{{ path('templates') }}" class="btn fleft" style="margin-right:5px;"> 
+		Вернуться к списку
+	</a>
+ <form action="{{ path('templates_delete', { 'id': entity.id }) }}" method="post">
+		{{ form_widget(delete_form) }}
+		<button type="submit" class="btn">Удалить</button>
+	</form>
+</div>
+{% endblock %}

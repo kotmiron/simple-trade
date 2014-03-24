@@ -1,0 +1,10 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Добавление админа</h2>
+    <br>
+    <form action="" method="post" {{ form_enctype(form) }}>
+      {{ form_widget(form) }}
+      <input type="submit" id="create" value="Создать" class="btn" />
+    </form>
+{% endblock %}

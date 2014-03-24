@@ -1,0 +1,58 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	<h2>Все новости</h2>
+
+	{% if user.canI('/news/add') %}
+	  <a href="{{ url('news') }}/add" class="btn">добавить</a>
+	{% endif %}
+	 <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Заголовок</th>
+            <th width="30%">Кто видит новость</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for item in news %}
+        <tr>
+          <td>
+            {{ item.getId() }}
+          </td>
+          <td>
+            {{ item.getContent().getTitle() }}
+          </td>
+          <td>
+			{{ permissions[item.getId()] }}
+          </td>
+          <td>
+			{% if user.canI('/news/change') %}
+				<a href="{{ url('news') }}/change/{{ item.getId() }}">изменить</a>
+			{% endif %}
+			{% if user.canI('/news/remove') %}
+				<a href="{{ url('news') }}/remove/{{ item.getId() }}" onclick="return confirm('Вы действительно хотите удалить новость?')">удалить</a>
+			{% endif %}
+
+			{#{% if item.getStatus() %}
+				{% if item.getStatus().getName() == 'PUBLIC' %}
+					{% if user.canI('/news/depublish') %}
+						<br><a href="{{ url('news') }}/depublish/{{ item.getId() }}" onclick="return confirm('Вы действительно хотите убрать новость из опубликованных?')">убрать из опубликованных</a>
+					{% endif %}
+				{% else %}
+					{% if user.canI('/news/publish') %}
+						<br><a href="{{ url('news') }}/publish/{{ item.getId() }}" onclick="return confirm('Вы действительно хотите опубликовать новость?')">опубликовать</a>
+					{% endif %}
+				{% endif %}
+			{% else %}
+				{% if user.canI('/news/publish') %}
+					<br><a href="{{ url('news') }}/publish/{{ item.getId() }}" onclick="return confirm('Вы действительно хотите опубликовать новость?')">опубликовать</a>
+				{% endif %}
+			{% endif %}#}
+          </td>
+        </tr>
+      {% endfor %}
+	  </tbody>
+    </table>
+{% endblock %}

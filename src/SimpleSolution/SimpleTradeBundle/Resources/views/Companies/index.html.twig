@@ -1,0 +1,75 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Все компании</h2>
+
+    {% if not user.isGod() %}
+      {% if user.canI('/companies') %}
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="{{ url('companies') }}">Все</a></li>
+                <li><a href="{{ url('companies') }}/requests">Заявки на регистрацию</a></li>
+            </ul>
+        </div>
+      {% endif %}
+    {% else %}
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="{{ url('companies') }}">Все</a></li>
+                <li><a href="{{ url('companies') }}/requests">Заявки на регистрацию</a></li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for company in companies %}
+        <tr>
+          <td>
+            {{ company.getId() }}
+          </td>
+          <td>
+            {{ company.getContent().getTitle() }}
+          </td>
+          <td>
+            {{ company.getStatus().getTitle() }}
+          </td>
+          <td>
+            {% if not user.isGod() %}
+              {% if user.canI('/companies/remove') %}
+                <a href="{{ url('companies') }}/remove/{{ company.getId() }}">удалить</a>
+              {% endif %}
+              {% if user.canI('/companies/change') %}
+                <a href="{{ url('companies') }}/change/{{ company.getId() }}">изменить</a>
+              {% endif %}
+              {% if user.canI('/users/show') %}
+                <a href="{{ url('users') }}/show/{{ company.getId() }}">пользователи</a>
+              {% endif %}
+              {% if company.getStatus().getName() == 'ACTIVE' %}
+                    {% if user.canI('/companies/block') %}
+                        <a href="{{ url('companies') }}/block/{{ company.getId() }}" onclick="return confirm('Вы действительно хотите заблокировать компанию?')">заблокировать</a>
+                    {% endif %}
+                {% elseif company.getStatus().getName() == 'BLOCKED' %}
+                    {% if user.canI('/companies/active') %}
+                        <a href="{{ url('companies') }}/active/{{ company.getId() }}" onclick="return confirm('Вы действительно хотите разблокировать компанию?')">разблокировать</a>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+              <a href="{{ url('companies') }}/remove/{{ company.getId() }}">удалить</a>
+              <a href="{{ url('companies') }}/change/{{ company.getId() }}">изменить</a>
+              <a href="{{ url('users') }}/show/{{ company.getId() }}">пользователи</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

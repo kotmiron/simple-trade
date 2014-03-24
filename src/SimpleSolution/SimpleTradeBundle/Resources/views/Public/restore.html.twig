@@ -1,0 +1,29 @@
+{% extends 'SimpleTradeBundle::layout.html.twig' %}
+
+{% block body %}
+<script>
+	jQuery(document).ready(function(){
+		jQuery("#form_restore").validationEngine();
+	});
+</script>
+ 
+<h1>Восстановление пароля</h1>
+<div class="alert-error-text">{{ notice }}</div>
+<form action="" method="post" id="form_restore" {{ form_enctype(form) }} class="form-horizontal">
+	 <div class="control-group">
+		<div class="control-label">{{ form_label(form.email) }}</div>
+		<div class="controls">
+			<input type="text" id="UsersRestorePassword_email" name="UsersRestorePassword[email]" class="validate[required]"/>
+		</div>
+	</div>
+
+	<div class="alert-error-text">{{ form_errors(form) }}</div>
+	<div class="control-group">
+		<div class="control-label"> </div>
+		<div class="controls">
+			  {{ form_widget(form._token) }}
+			  <input type="submit" value="Восстановить" class="but"/>
+		</div>
+	</div>
+  </form>
+{% endblock %}

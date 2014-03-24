@@ -1,0 +1,39 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Аккаунты компаний</h2>
+    <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="20%">Название</th>
+            <th width="20%" class="c">Количество денег</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for company in companies %}
+        <tr>
+          <td>
+            {{ company.getId() }}
+          </td>
+          <td>
+            {{ company.getContent().getTitle() }}
+          </td>
+          <td class="c">
+            {{ accounts[company.getId()] }}
+          </td>
+          <td>
+            {% if not user.isGod() %}
+              {% if user.canI('/companies/managment/add') %}
+                <a href="{{ url('companies_managment') }}/add/{{ company.getId() }}">пополнить баланс</a>
+              {% endif %}
+            {% else %}
+              <a href="{{ url('companies_managment') }}/add/{{ company.getId() }}">пополнить баланс</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

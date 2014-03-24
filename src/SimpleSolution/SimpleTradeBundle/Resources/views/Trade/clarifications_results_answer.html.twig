@@ -1,0 +1,93 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		{% if app.user.canI('/trade/notice') %}
+		<li><a href="{{ path('trade_notice', {'id': auction.getId() }) }}">Извещение о проведении электронного аукциона</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/auction/request') %}
+		<li><a href="{{ path('trade_clarifications_auction_request', {'id': auction.getId() }) }}">Разъяснения к аукциону</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/offer') %}
+		<li><a href="{{ path('trade_offer', {'id': auction.getId() }) }}">Моя заявка на участие</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/offers') %}
+		<li><a href="{{ path('trade_offers', {'id': auction.getId() }) }}">Заявки на участие</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/room') %}
+		<li><a href="{{ path('trade_room', {'id': auction.getId() }) }}">Аукционный зал</a></li>
+		{% endif %}
+		<li class="active"><a>Разьяснения результатов</a></li>
+	</ul>
+</div>
+
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId() } %}
+
+{% for key, value in all_clarifications %}
+<div style="border: #000000 solid 1px; padding: 10px;">
+	<div  style="border: #000000 solid 1px; padding: 10px;">
+        <b>Запрос:</b><br>
+        Компания {{ value.request.company.getContent.getTitle }}, {{ value.request.request.getCreatedAt|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+        Текст сообщения: {{ value.request.request.getContent.getBody }}<br>
+		{% if not value.answer %}
+		<div align="right"><input id="answer_button_{{ key }}_id" type="button" value="Ответить" /></div>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#answer_button_{{ key }}_id').click(function(){
+					$('#answer_{{ key }}_id').show();
+				});
+			});
+	    </script>
+		{% endif %}
+	</div>
+
+	{% if value.answer %}
+	<div  style="border: #000000 solid 1px; padding: 10px;">
+        <b>Ответ:</b><br>
+
+	    {% if value.answer.company %}Компания {{ value.answer.company.getContent.getTitle }}{% else %}Администратор площадки{% endif %}, {{ value.answer.answer.getCreatedAt|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	    Текст сообщения: {{ value.answer.answer.getContent.getBody }}<br>
+	    Документы:
+		<br>
+	    {% for document in value.answer.documents %}
+			{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+	    	<a href="{{ path('trade_clarification_get_doc', {'id': value.answer.answer.getId, 'idFile': document.getContent.getId}) }}" target="_blank">
+		    	Скачать
+		    </a>
+			<br>
+	    {% endfor %}
+    </div>
+	{% else %}
+	<div id="answer_{{ key }}_id" style="border: #000000 solid 1px; padding: 10px; {% if not form_errors(forms[value.request.request.getId]) and not form_errors(forms[value.request.request.getId].body) %}display: none;{% endif %}">
+        <b>Ответ:</b><br>
+
+        <form action="{{ path('trade_clarifications_results_answer', {'id': auction.getId() }) }}" method="post" {{ form_enctype(forms[value.request.request.getId]) }}>
+	        {{ form_errors(forms[value.request.request.getId]) }}
+	        <div>
+		        {{ form_errors(forms[value.request.request.getId].body) }}
+		        {{ form_widget(forms[value.request.request.getId].body) }}
+	        </div>
+	        <fieldset>
+	           <legend>Добавить файл</legend>
+	           <div class="control-group">
+		           <ul class="files" data-prototype="{{ form_widget(forms[value.request.request.getId].files.vars.prototype)|e }}">
+			           {% for key, file in forms[value.request.request.getId].files %}
+			           <li>{{ form_widget(file) }}</li>{{ form_errors(forms[value.request.request.getId].files[key]) }}
+			           {% endfor %}
+		           </ul>
+	           </div>
+	        </fieldset>
+	        <input type="submit" value="Отправить"  class="btn"/>
+	        {{ form_rest(forms[value.request.request.getId]) }}
+        </form>
+    </div>
+    {% endif %}
+
+</div><br>
+{% endfor %}
+
+
+{% endblock %}

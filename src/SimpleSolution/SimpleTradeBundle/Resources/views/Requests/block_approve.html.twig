@@ -1,0 +1,28 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Подтверждение блокировки компании {{ company.getContent().getTitle() }}</h2>
+    <form action="" method="post" {{ form_enctype(form) }} class="form-horizontal">
+      {{ form_errors(form) }}
+
+      <fieldset>
+        <legend></legend>
+
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.comment) }}</div>
+            <div class="controls">
+                {{ form_widget(form.comment) }}
+                <span class="help-inline">{{ form_errors(form.comment) }}</span>
+            </div>
+        </div>
+    </fieldset>
+
+    {{ form_rest(form) }}
+    <div class="control-group">
+        <div class="controls">
+            <a href="{{ url('requests') }}/block/show/{{ company.getId() }}">Отмена</a>
+            <input type="submit" value="Сохранить" class="btn" />
+        </div>
+    </div>
+  </form>
+{% endblock %}

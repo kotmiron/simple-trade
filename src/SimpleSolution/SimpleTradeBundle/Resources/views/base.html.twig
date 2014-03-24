@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title>SimpleTrade</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    {% block stylesheets %}
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{{ asset('css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{{ asset('css/validationEngine.jquery.css') }}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{{ asset('css/normalize.css') }}" rel="stylesheet" type="text/css" media="screen">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css" media="screen">
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="{{ asset('css/ie.css') }}" /><![endif]-->
+    <!--[if lt IE 9]>
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/ie8.css') }}" />
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% endblock %}
+
+    {% block js %}
+    <script src="{{ asset('js/jquery-1.8.2.min.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/jquery.validationEngine-ru.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/jquery.validationEngine.js') }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ asset('js/files.js') }}" type="text/javascript" charset="utf-8"></script>
+	<script src="{{ asset('js/form.js') }}" type="text/javascript" charset="utf-8"></script>
+	<script src="{{ asset('js/datetime.js') }}" type="text/javascript" charset="utf-8"></script>
+    {% endblock %}
+
+    {% block custom_js %}
+    {% endblock %}
+    {% block custom_css %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="wrapper container">
+        <div class="inner">
+            {% render "SimpleTradeBundle:Default:header" %}
+                    <!-- Начало в Header -->
+                    {% block body %}
+                    {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

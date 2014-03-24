@@ -1,0 +1,11 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	Добавление пользователя в СРО {{ sro.getContent().getTitle() }}:
+    <br>
+    <form action="" method="post" {{ form_enctype(form) }}>
+      {{ form_widget(form) }}
+      <input type="submit" id="create"/>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Заявки администратору от компаний из СРО {{ sro.getContent().getTitle() }}
+
+  <table border="1">
+	  <tr>
+		  <td>
+			  ID
+		  </td>
+		  <td>
+			  Компания
+		  </td>
+		  <td>
+			  Тип
+		  </td>
+		  <td>
+			  Статус
+		  </td>
+	  </tr>
+  {% for request in requests %}
+		<tr>
+			<td>
+				{{ request.getId() }}
+			</td>
+			<td>
+				{{ request.getCompany().getContent().getTitle() }}
+			</td>
+			<td>
+				{{ request.getType().getTitle() }}
+			</td>
+			<td>
+				{{ request.getStatus().getTitle() }}
+			</td>
+		</tr>
+  {% endfor %}
+  </table>
+{% endblock %}

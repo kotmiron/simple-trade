@@ -1,0 +1,67 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+    <script src="{{ asset('js/tiny_mce/tiny_mce.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block body %}
+
+<h2>Изменение новости</h2>
+
+<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="newsChange">
+      {{ form_errors(form) }}
+
+      <fieldset>
+        <legend></legend>
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+                {{ form_widget(form.title) }}
+                <span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.text) }}</div>
+            <div class="controls">
+                {{ form_widget(form.text) }}
+                <span class="help-inline">{{ form_errors(form.text) }}</span>
+            </div>
+        </div>
+    </fieldset>
+
+    {{ form_rest(form) }}
+
+    <div class="control-group">
+        <div class="controls">
+            <input type="submit" value="Ok" class="btn" id="submit"/>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    tinyMCE.init({
+        mode : "textareas",
+        theme : "simple"
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#submit').click(function()
+        {
+            var text = tinyMCE.get('newsChange_text').getContent();
+            if (text == '')
+            {
+                $('#newsChange_text').validationEngine('showPrompt', 'Введите текст', 'error', true);
+                var destination = $('#newsChange_text').offset().top-100;
+                $("html, body").animate({
+                    scrollTop: destination
+                });
+                $("#newsChange").validationEngine();
+                return false;
+            }
+        });
+    });
+</script>
+{% endblock %}
+

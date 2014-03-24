@@ -1,0 +1,136 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Просмотр заявки на вступление в СРО от компании {{ company.getContent().getTitle() }}
+
+	<fieldset>
+		<legend>Основные сведения</legend>
+
+		<div class="control-group">
+            <div class="control-label">Название</div>
+            <div class="controls">
+				{{ company.getContent().getName() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Полное название компании</div>
+            <div class="controls">
+				{{ company.getContent().getTitle() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">ИНН</div>
+            <div class="controls">
+				{{ company.getContent().getInn() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">КПП</div>
+            <div class="controls">
+				{{ company.getContent().getKpp() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">ОГРН</div>
+            <div class="controls">
+				{{ company.getContent().getOgrn() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Регион</div>
+            <div class="controls">
+				{{ company.getContent().getRegion().getTitle() }}
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Сведения о подписчике договора</legend>
+		<div class="control-group">
+            <div class="control-label">ФИО</div>
+            <div class="controls">
+				{{ company.getContent().getUserName() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Email</div>
+            <div class="controls">
+				{{ company.getContent().getEmail() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Телефон</div>
+            <div class="controls">
+				{{ company.getContent().getPhone() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Должность</div>
+            <div class="controls">
+				{{ company.getContent().getPosition() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Действует на основании</div>
+            <div class="controls">
+				{{ company.getContent().getGrounds() }}
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Квалификации</legend>
+		<div class="control-group">
+			<div class="control-label">{{ skills }}</div>
+			<div class="controls">
+
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Информация о СРО</legend>
+
+		<div class="control-group">
+            <div class="control-label">Название</div>
+            <div class="controls">
+				{{ requestSros.getSro().getContent().getTitle() }}
+            </div>
+		</div>
+		<div class="control-group">
+            <div class="control-label">Квалификации</div>
+            <div class="controls">
+				{{ sroSkills }}
+            </div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Документы</legend>
+        Уже загруженные:<br>
+		{% for file in files %}
+			{% if file['isActive'] %}
+				<div class="control-group">
+					<div class="control-label">{{ file.title }} - {{ file.filename }}</div>
+					<div class="controls">
+						<a href="/uploads/documents/{{ file['filename'] }}">Скачать</a>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</fieldset>
+
+	<br>
+	<a href="{{ url('requests') }}/sros">Назад</a>
+	<br>
+	{% if request.getStatus().getName() == 'NEW' %}
+		{% if user.canI('/requests/sros/approve') %}
+		  <a href="{{ url('requests') }}/sros/approve/{{ request.getId() }}">Подтвердить</a>
+		{% endif %}
+		<br>
+		{% if user.canI('/requests/sros/reject') %}
+	      <a href="{{ url('requests') }}/sros/reject/{{ request.getId() }}">отклонить (не работает)</a>
+		{% endif %}
+	{% endif %}
+	<br>
+{% endblock %}

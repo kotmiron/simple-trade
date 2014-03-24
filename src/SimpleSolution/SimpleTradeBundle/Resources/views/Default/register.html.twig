@@ -1,0 +1,193 @@
+{% extends 'SimpleTradeBundle::layout.html.twig' %}
+
+{% block body %}
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    jQuery("#registerForm").validationEngine();
+});
+</script>
+
+
+<a href="login">Вход</a><br><br>
+
+<h2>Заявление на регистрацию пользователя</h2>
+
+<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="registerForm">
+    {{ form_errors(form) }}
+
+    <fieldset>
+    <legend>Основные сведения</legend>
+
+    <div class="control-group">
+        <div class="control-label">{{ form_label(form.role) }}</div>
+        <div class="controls">
+            {{ form_widget(form.role) }}
+            <span class="help-inline">{{ form_errors(form.role) }}</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="control-label">{{ form_label(form.sro) }}</div>
+        <div class="controls">
+            {{ form_widget(form.sro) }}
+            <span class="help-inline">{{ form_errors(form.sro) }}</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="control-label">{{ form_label(form.skills) }}</div>
+        <div class="controls">
+            {{ form_widget(form.skills) }}
+            <span class="help-inline">{{ form_errors(form.skills) }}</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="control-label">{{ form_label(form.region) }}</div>
+        <div class="controls">
+            {{ form_widget(form.region) }}
+            <span class="help-inline">{{ form_errors(form.region) }}</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.name) }}</div>
+            <div class="controls">
+        {{ form_widget(form.name) }}
+        <span class="help-inline">{{ form_errors(form.name) }}</span>
+            </div>
+    </div>
+
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.title) }}</div>
+            <div class="controls">
+        {{ form_widget(form.title) }}
+        <span class="help-inline">{{ form_errors(form.title) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.login) }}</div>
+            <div class="controls">
+        {{ form_widget(form.login) }}
+        <span class="help-inline">{{ form_errors(form.login) }}</span>
+            </div>
+    </div>
+
+
+    <div class="control-group">
+            <div class="controls">
+        {{ form_widget(form.password) }}
+        <span class="help-inline">{{ form_errors(form.password) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.inn) }}</div>
+            <div class="controls">
+        {{ form_widget(form.inn) }}
+        <span class="help-inline">{{ form_errors(form.inn) }}</span>
+            </div>
+    </div>
+
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.kpp) }}</div>
+            <div class="controls">
+        {{ form_widget(form.kpp) }}
+        <span class="help-inline">{{ form_errors(form.kpp) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.ogrn) }}</div>
+            <div class="controls">
+        {{ form_widget(form.ogrn) }}
+        <span class="help-inline">{{ form_errors(form.ogrn) }}</span>
+            </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Сведения о лице, подписавшем Заявку</legend>
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.lastname) }}</div>
+            <div class="controls">
+        {{ form_widget(form.lastname) }}
+        <span class="help-inline">{{ form_errors(form.lastname) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.firstname) }}</div>
+            <div class="controls">
+        {{ form_widget(form.firstname) }}
+        <span class="help-inline">{{ form_errors(form.firstname) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.patronymic) }}</div>
+            <div class="controls">
+        {{ form_widget(form.patronymic) }}
+        <span class="help-inline">{{ form_errors(form.patronymic) }}</span>
+            </div>
+    </div>
+
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.position) }}</div>
+            <div class="controls">
+        {{ form_widget(form.position) }}
+        <span class="help-inline">{{ form_errors(form.position) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.grounds) }}</div>
+            <div class="controls">
+        {{ form_widget(form.grounds) }}
+        <span class="help-inline">{{ form_errors(form.grounds) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.email) }}</div>
+            <div class="controls">
+        {{ form_widget(form.email) }}
+        <span class="help-inline">{{ form_errors(form.email) }}</span>
+            </div>
+    </div>
+
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.phone) }}</div>
+            <div class="controls">
+        {{ form_widget(form.phone) }}
+        <span class="help-inline">{{ form_errors(form.phone) }}</span>
+            </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Документы</legend>
+    <div class="control-group">
+            <div class="control-label">{{ form_label(form.filename) }}</div>
+            <div class="controls">
+        {{ form_widget(form.filename) }}
+        <span class="help-inline">{{ form_errors(form.filename) }}</span>
+            </div>
+    </div>
+  </fieldset>
+
+  {{ form_rest(form) }}
+
+  <div class="control-group">
+    <div class="controls">
+      <input type="submit" value="Ok" class="btn" />
+    </div>
+  </div>
+</form>
+
+{% endblock %}

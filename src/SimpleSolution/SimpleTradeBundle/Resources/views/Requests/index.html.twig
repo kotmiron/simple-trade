@@ -1,0 +1,36 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Все заявки</h2>
+    <div class="tabbable">
+        <ul class="nav nav-tabs">
+        {% if not user.isGod() %}
+          {% if user.canI('/requests/register') %}
+            <li><a href="{{ url('requests') }}/register">Заявки на регистрацию</a></li>
+          {% endif %}
+          {% if user.canI('/requests/skills') %}
+            <li><a href="{{ url('requests') }}/skills">Заявки на повышение квалификации</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/block') %}
+			<li><a href="{{ url('requests') }}/block">Заявки на блокировку компаний</a></li>
+		  {% endif %}
+          {% if user.canI('/requests/auctions') %}
+            <li><a href="{{ url('requests') }}/auctions">Заявки на создание аукциона</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/sros') %}
+            <li><a href="{{ url('requests') }}/sros">Заявки на вступление в СРО</a></li>
+          {% endif %}
+		  {% if user.canI('/requests/complaints') %}
+            <li><a href="{{ url('requests') }}/complaints">Жалобы на компании</a></li>
+          {% endif %}
+        {% else %}
+          <li><a href="{{ url('requests') }}/register">Заявки на регистрацию</a></li>
+          <li><a href="{{ url('requests') }}/skills">Заявки на повышение квалификации</a></li>
+          <li><a href="{{ url('requests') }}/block">Заявки на блокировку компаний</a></li>
+		  <li><a href="{{ url('requests') }}/auctions">Заявки на создание аукциона</a></li>
+		  <li><a href="{{ url('requests') }}/sros">Заявки на вступление в СРО</a></li>
+		  <li><a href="{{ url('requests') }}/complaints">Жалобы на компании</a></li>
+        {% endif %}
+        </ul>
+    </div>
+{% endblock %}

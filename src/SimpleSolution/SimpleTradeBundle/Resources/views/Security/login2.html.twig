@@ -1,0 +1,22 @@
+    {% if error %}
+        <div class="alert alert-error">{{ error.message }}</div>
+    {% endif %}
+    
+    {% for notice in notices %}
+        <div class="alert alert-info">{{ notice }}</div>
+    {% endfor %}   
+	
+		<div class="auth-login-title">Авторизация</div>
+        <div id="auth">
+			<form action="{{ path('login_check') }}" method="post">
+				<input type="text" id="username" name="_username" value="{{ last_username }}"  placeholder="Логин"/>
+                <input type="password" id="password" name="_password" placeholder="Пароль"/>
+                <input type="submit"  class="but" value="Войти" />
+				<a href="{{ path('public_restore') }}">Забыли пароль?</a>
+        {#
+            If you want to control the URL the user is redirected to on success (more details below)
+            <input type="hidden" name="_target_path" value="/account" />
+        #}                        
+          </form>
+	</div>
+	<a href="{{ path('public_register') }}" class="reg">Регистрация</a>

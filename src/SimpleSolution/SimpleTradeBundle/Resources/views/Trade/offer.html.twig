@@ -1,0 +1,195 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		{% if app.user.canI('/trade/notice') %}
+		<li><a href="{{ path('trade_notice', {'id': auction.getId() }) }}">Извещение о проведении электронного аукциона</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/auction/request') %}
+		<li><a href="{{ path('trade_clarifications_auction_request', {'id': auction.getId()}) }}">Разъяснения к аукциону</a></li>
+		{% endif %}
+		<li class="active"><a>Моя заявка на участие</a></li>
+		{% if app.user.canI('/trade/offers') %}
+		<li><a href="{{ path('trade_offers', {'id': auction.getId()}) }}">Заявки на участие</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/room') %}
+		<li><a href="{{ path('trade_room', {'id': auction.getId()}) }}">Аукционный зал</a></li>
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/results/answer') %}
+		<li><a href="{{ path('trade_clarifications_results_answer', {'id': auction.getId()}) }}">Разьяснения результатов</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+<span>Время до окончания срока подачи заявок: <div id="timeToEnd"></div></span>
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId()} %}
+
+<h2>Заявка на участие</h2>
+<table>
+	<tr>
+		<td width="50%">
+			Наименование компании-подрядчика: {{ company.getContent().getTitle() }}
+		</td>
+		<td>
+			Контактное лицо: {{ company.getContent().getUserName() }}<br>
+			E-mail контактного лица: {{ company.getContent().getEmail() }}<br>
+			Телефон контактного лица: {{ company.getContent().getPhone() }}
+		</td>
+	</tr>
+	<tr>
+		<td>
+			{% for sro in sros %}
+				СРО {{ sro.getType().getTitle() }} {{ sro.getContent().getTitle() }}<br>
+			{% endfor %}
+		</td>
+		<td>
+			Квалификации:
+			{% for skill in company.getCompaniesSkills() %}
+				{{ skill.getSkill().getTitle() }}
+			{% endfor %}
+		</td>
+	</tr>
+</table>
+{% if files %}
+	<br>
+	{% for file in files %}
+		{{ file.filename }} - {{ file.title }}
+		<a href="{{ path('offers_get_doc', {'id': offer.getId(), 'idFile': file['id']}) }}" target="_blank">
+			Скачать
+		</a>
+		<br>
+	{% endfor %}
+{% endif %}
+<br>
+{% if auction.getStatus().getName() == 'PUBLIC' %}
+	{% if timeToEnd > 0 %}
+		<div id="buttons">
+		{% if offer %}
+			{% if user.canI('/offers/remove') %}
+				<a href="{{ url('offers') }}/remove/{{ offer.getId() }}">Снять заявку</a>
+			{% endif %}
+		{% else %}
+			{% if user.canI('/offers/add') %}
+				<form action="" method="post" id="file_add" {{ form_enctype(form) }} >
+					<div style="color:#FF0000">{{ form_errors(form) }}</div>
+					<fieldset>
+						<legend>Добавить файл</legend>
+						<div class="control-group">
+							<ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+							 {% for file in form.files %}
+								 <li>{{ form_row(file.file) }}</li>
+							 {% endfor %}
+							</ul>
+						</div>
+				   </fieldset>
+				   {{ form_rest(form) }}
+				   <input type="submit" value="Подать заявку на участие" id="submit" class="btn"/>
+				   <div id="confirm" style="display:none">
+					   Услуга подачи заявки стоит {{ tariff.getCost() }} рублей, подтвердите свое желание оформить заявку
+					   <br>
+					   <div id="confirm_error" style="display:none">На счету меньше, чем стоит услуга! Пополните баланс</div>
+					   <a href="" id="close_confirm">отмена</a>
+					   <input type="submit" value="Подать заявку на участие" id="add_offer" class="btn"/>
+				   </div>
+				</form>
+			{% endif %}
+		{% endif %}
+		</div>
+	{% else %}
+		время подачи заявок закончилось
+	{% endif %}
+{% else %}
+	нельзя изменять заявку в этом статусе
+{% endif %}
+<br>
+{% if protocol %}
+Протокол рассмотрения заявок на участие<br><br>
+<div style="border: #000000 solid 1px; padding: 15px;">
+	<div align="right"><a href="{{ url('requests_complaints') }}/add/{{ auctionCompany.getId() }}">Подать жалобу на компанию {{ auctionCompany.getContent().getTitle() }}</a></div>
+	Место разьяснения: {{ protocol.protocol.getContent.getPlaceView }}<br>
+	Дата и время начала рассмотрения: {{ protocol.protocol.getContent.getDatetimeStartView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	Дата и время окончания рассмотрения: {{ protocol.protocol.getContent.getDatetimeEndView|date("d.m.Y, H:i:s", 'Europe/Moscow') }}<br>
+	<br>
+	<b>Состав единой комисси:</b><br><br>
+
+	{{ protocol.protocol.getContent.getFullName1 }}, {{ protocol.protocol.getContent.getPosition1 }}<br>
+	{{ protocol.protocol.getContent.getFullName2 }}, {{ protocol.protocol.getContent.getPosition2 }}<br>
+	{{ protocol.protocol.getContent.getFullName3 }}, {{ protocol.protocol.getContent.getPosition3 }}<br>
+
+	<br>
+	<b>Итоги рассмотрения заявок:</b><br><br>
+	<table border="1" style="width: 400px;">
+		<tr>
+			<td>Название компании-подрядчика</td>
+			<td>Допущен к участию в аукционе</td>
+		</tr>
+	{% for title,offer in offersForProtocol %}
+		<tr>
+			<td>{{ title }}</td>
+			<td>{{ offer ? 'да' : 'нет' }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	<br><br>
+	<b>Приложенные документы</b>
+	<br>
+	{% for document in protocol.documents %}
+		{{ document.getContent.getFilename }} - {{ document.getContent.getTitle }}
+		<a href="{{ path('trade_protocols_get_doc', {'id': protocol.protocol.getId(), 'idFile': document.getId()}) }}" target="_blank">
+			Скачать
+		</a>
+		<br>
+	{% endfor %}
+</div>
+{% endif %}
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$('#add_offer').click(function()
+	{
+		if ( parseFloat('{{ money }}') < parseFloat('{{ tariff.getCost() }}') )
+		{
+		  $('#confirm_error').show();
+		  return false;
+		}
+		return true;
+	});
+
+	$('#submit').click(function()
+	{
+		$('#confirm').show();
+		$(this).hide();
+		return false;
+	});
+
+	$('#close_confirm').click(function()
+	{
+		$('#submit').show();
+		$('#confirm').hide();
+		$('#confirm_error').hide();
+		return false;
+	});
+
+	var allSeconds = parseFloat('{{ timeToEnd }}');
+	timer = setInterval(function ()
+	{
+		if (allSeconds > 0) {
+			allSeconds--;
+			var days = Math.floor(allSeconds / 86400);
+			var hours = Math.floor((allSeconds - days * 86400) / 3600);
+			var minutes = Math.floor((allSeconds - days * 86400 - hours * 3600) / 60);
+			var seconds = allSeconds - days * 86400 - hours * 3600 - minutes * 60;
+
+			$('#timeToEnd').text(days + ' дн ' + hours + ' ч ' + minutes + ' мин ' + seconds + ' сек');
+		} else {
+			clearInterval(timer);
+			$('#timeToEnd').text('время подачи заявок закончилось');
+			$('#buttons').hide();
+		}
+	}, 1000);
+});
+</script>
+{% endblock %}

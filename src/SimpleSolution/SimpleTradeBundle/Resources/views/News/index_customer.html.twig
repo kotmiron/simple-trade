@@ -1,0 +1,11 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Все новости для заказчика</h2>
+{% for item in news %}
+	<span class="grey">{{ item.getCreatedAt() | date('d.M.Y H:i:s') }}</span>
+	<h4>{{ item.getContent().getTitle() }}</h4>
+	{{ item.getContent().getText() | raw}}
+	<hr>
+{% endfor %}
+{% endblock %}

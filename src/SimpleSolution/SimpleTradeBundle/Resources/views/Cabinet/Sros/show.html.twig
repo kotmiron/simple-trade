@@ -1,0 +1,32 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Просмотр СРО {{ sro.getContent().getTitle() }}
+
+	<fieldset>
+		<legend>Основные сведения</legend>
+
+		<div class="control-group">
+            <div class="control-label">Название</div>
+            <div class="controls">
+				{{ sro.getContent().getTitle() }}
+            </div>
+		</div>
+
+	</fieldset>
+
+
+	<fieldset>
+		<legend>Квалификации</legend>
+		<div class="control-group">
+			<div class="control-label">{{ sroSkills }}</div>
+			<div class="controls">
+
+			</div>
+		</div>
+	</fieldset>
+
+	<br>
+	<a href="{{ url('cabinet_sros') }}">Назад</a>
+	<br>
+{% endblock %}

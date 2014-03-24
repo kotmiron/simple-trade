@@ -1,0 +1,56 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    Список моих компаний
+    <br>
+    <table border="1">
+      <tr>
+        <td>
+          ID
+        </td>
+        <td>
+          Название
+        </td>
+        <td>
+          Статус
+        </td>
+        <td>
+          Действия
+        </td>
+      </tr>
+      {% for sro in sroCompanies %}
+        {% for company in sro %}
+          <tr>
+            <td>
+              {{ company.getId() }}
+            </td>
+            <td>
+              {{ company.getContent().getTitle() }}
+            </td>
+            <td>
+              {{ company.getStatus().getTitle() }}
+            </td>
+            <td>
+              {% if company.getStatus().getName() != 'PRE_REGISTRATION' %}
+                {% if company.getStatus().getName() == 'ACTIVE' %}
+					{% if user.canI('/sros/companies/block') %}
+						<br><a href="{{ url('sros_companies') }}/block/{{ company.getId() }}" onclick="return confirm('Вы действительно хотите заблокировать компанию?')">заблокировать</a>
+					{% endif %}
+                {#{% elseif company.getStatus().getName() == 'BLOCKED' %}
+					{% if user.canI('/sros/companies/active') %}
+						<br><a href="{{ url('sros_companies') }}/active/{{ company.getId() }}" onclick="return confirm('Вы действительно хотите разблокировать компанию?')">разблокировать</a>
+					{% endif %}#}
+                {% endif %}
+              {% endif %}
+			  {% if user.canI('/sros/companies/change') %}
+					<br><a href="{{ url('sros_companies') }}/change/{{ company.getId() }}">изменить</a>
+			  {% endif %}
+			  {% if user.canI('/sros/companies/change/skills') %}
+					<br><a href="{{ url('sros_companies') }}/change/skills/{{ company.getId() }}">изменить квалификации</a>
+			  {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
+{% endblock %}

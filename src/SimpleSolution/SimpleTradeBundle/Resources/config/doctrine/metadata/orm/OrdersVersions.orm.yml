@@ -1,0 +1,40 @@
+OrdersVersions:
+    type: entity
+    table: orders_versions
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        createdAt:
+            type: datetime
+            nullable: false
+            column: created_at
+        groupId:
+            type: integer
+            unsigned: false
+            nullable: false
+            column: group_id
+    manyToOne:
+        content:
+            targetEntity: OrdersContent
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                content_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        session:
+            targetEntity: Sessions
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                session_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

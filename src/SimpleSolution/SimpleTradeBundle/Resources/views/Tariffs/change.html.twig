@@ -1,0 +1,28 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+    <h2>Изменение тарифа {{ tariff.getTitle() }}</h2>
+    <form action="" method="post" {{ form_enctype(form) }} class="form-horizontal">
+      {{ form_errors(form) }}
+
+      <fieldset>
+        <legend></legend>
+
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.cost) }}</div>
+            <div class="controls">
+                {{ form_widget(form.cost) }}
+                <span class="help-inline">{{ form_errors(form.cost) }}</span>
+            </div>
+        </div>
+    </fieldset>
+
+    {{ form_rest(form) }}
+    <div class="control-group">
+        <div class="controls">
+            <a href="{{ url('tariffs') }}">Отмена</a>
+            <input type="submit" value="Сохранить" class="btn" />
+        </div>
+    </div>
+  </form>
+{% endblock %}

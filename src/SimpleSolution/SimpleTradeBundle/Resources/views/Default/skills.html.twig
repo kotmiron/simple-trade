@@ -1,0 +1,7 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	Квалификации компании {{ company.getContent().getName() }}:
+	<br>
+	{{ skills }}
+{% endblock %}

@@ -1,0 +1,41 @@
+SimpleSolution\SimpleTradeBundle\Entity\Companies:
+  properties:
+    title:
+      - NotBlank: ~
+    name:
+      - NotBlank: ~
+      - MinLength: 3
+      - MaxLength: 255
+    login:
+      - NotBlank: ~
+      - MaxLength: 255
+    password:
+      - NotBlank: ~
+    inn:
+      - NotBlank: ~
+      - MinLength: 10
+      - MaxLength: 12
+    lastname:
+      - NotBlank: ~
+      - MaxLength: 64
+    firstname:
+      - NotBlank: ~
+      - MaxLength: 64
+    patronymic:
+      - MaxLength: 64
+    email:
+      - NotBlank: ~
+      - Email: { message: 'Указанное значение не является e-mail адресом', checkMX: true }
+      - MaxLength: 255
+    phone:
+      - NotBlank: ~
+
+SimpleSolution\SimpleTradeBundle\Entity\News:
+  properties:
+    title:
+      - NotBlank: ~
+    text:
+      - NotBlank: ~
+
+
+

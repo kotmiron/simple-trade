@@ -1,0 +1,131 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Торги</h2>
+<h3>Поиск</h3>
+    <div align="right" style="margin-right: 50px;">
+		{% if app.user.canI('/trade/notice/create') %}
+			<input id="new_auction_id" type="button" value="Создать аукцион" />
+		{% endif %}
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+            $('#new_auction_id').click(function(){
+				if ( parseFloat('{{ money }}') < parseFloat('{{ tariff.getCost() }}') )	{
+				    alert('На счету меньше, чем стоит услуга! Пополните баланс');
+				} else {
+					if (confirm('Услуга создания аукциона стоит {{ tariff.getCost() }} рублей, подтвердите свое желание создать аукцион')) {
+					    window.location.href = "{{ path('trade_notice_create') }}";
+					}
+				}
+			});
+		});
+	</script>
+    <form action="{{ path('trade') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+        <div>
+            {{ form_errors(form.type) }}
+            {{ form_widget(form.type) }}
+        </div>
+		<br>
+        <div>
+            {{ form_label(form.code) }}
+            {{ form_errors(form.code) }}
+            {{ form_widget(form.code) }}
+        </div>
+        <div>
+            {{ form_label(form.title) }}
+            {{ form_errors(form.title) }}
+            {{ form_widget(form.title) }}
+        </div>
+
+		<a id="type_search_id" href="" type="{% if form.vars.value and form.vars.value.is_extended %}extended{% else %}normal{% endif %}">
+			{% if form.vars.value and form.vars.value.is_extended %}
+			Обычный поиск
+			{% else %}
+			Расширенный поиск
+			{% endif %}
+		</a>
+		<script type="text/javascript">
+			$(document).ready(function(){
+                $('#type_search_id').click(function(){
+
+					var th = $(this);
+
+					if (th.attr('type') == 'normal') {
+					    th.attr('type', 'extended');
+						th.html('Обычный поиск');
+						$('#extended_search_id').show();
+						$('#tradeSearchAuction_is_extended').val('1');
+				    } else {
+						th.attr('type', 'normal');
+						th.html('Расширенный поиск');
+						$('#extended_search_id').hide();
+						$('#tradeSearchAuction_is_extended').val('');
+				    }
+
+					return false;
+				});
+			});
+	    </script>
+
+		<div id="extended_search_id" {% if not form.vars.value or not form.vars.value.is_extended %}style="display: none;"{% endif %}>
+			<br><br>
+            <div>
+                {{ form_label(form.region) }}
+                {{ form_errors(form.region) }}
+                {{ form_widget(form.region) }}
+            </div>
+		</div>
+
+        <br>
+		<br>
+        <input type="submit" value="Найти" class="btn" />
+        {{ form_rest(form) }}
+    </form>
+    <h3>Аукционы</h3>
+	{% if auctions | length > 0 %}
+		<table id="auctions_id" class="info-list-table table table-striped table-hover">
+		  <thead>
+			  <tr>
+				<th width="5%">Статус</th>
+				<th width="10%">Организатор</th>
+				<th width="10%">Код аукциона</th>
+				<th width="10%">Название аукциона</th>
+				<th width="10%">Опубликован (мск)</th>
+				<th width="10%">Дата окончания приёма заявок (мск)</th>
+				<th width="10%">Дата и время проведения аукциона (мск)</th>
+				<th width="10%">Начальная (максимальная) цена контракта</th>
+				<th width="15%"></th>
+				<th></th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			{% for auction in auctions %}
+			<tr>
+				<td>{{ auction['object'].getStatus().getTitle }}</td>
+				<td>{{ auction['company'].getContent.getTitle }}</td>
+				<td>01010100001010100</td>
+				<td>{{ auction['object'].getContent.getTitle }}</td>
+				<td>{{ auction['public_date']|date("d.m.Y", "Europe/Moscow") }}</td>
+				<td>{% if auction['object'].getContent.getEndOffer %}
+						{{ auction['object'].getContent.getEndOffer|date("d.m.Y", "Europe/Moscow") }}
+					{% endif %}
+				</td>
+				<td>{% if auction['object'].getContent.getEndOffer %}
+						{{ auction['object'].getContent.getStartAuction|date("d.m.Y, H:i:s", "Europe/Moscow") }}
+					{% endif %}
+				</td>
+				<td>{% if auction['object'].getContent.getStartPrice %}
+						{{ auction['object'].getContent.getStartPrice }} {{ auction['object'].getContent.getCurrency.getTitle | transform(auction['object'].getContent.getStartPrice) }}
+					{% endif %}
+				</td>
+				<td><a href="{{ path('trade_notice', {'id': auction['object'].getId()}) }}">Далее</a></td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		нет аукционов
+	{% endif %}
+{% endblock %}

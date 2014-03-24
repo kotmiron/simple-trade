@@ -1,0 +1,86 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block custom_js %}
+    <script src="{{ asset('js/bootstrap.min.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block body %}
+<a href="{{ path('trade') }}" class="fright">« Вернуться к списку аукционов</a>
+<h2>Торги</h2>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		<li class="active"><a>Извещение о проведении электронного аукциона</a></li>
+		{% if app.user.canI('/trade/clarifications/auction/request') %}
+		<li><a href="{{ path('trade_clarifications_auction_request', {'id': auction.getId() }) }}">Разъяснения к аукциону</a></li>
+		{% endif %}
+		{% if auction.getContent().getTradingForm().getName() == 'AUCTION' %}
+			{% if app.user.canI('/trade/offer') %}
+			<li><a href="{{ path('trade_offer', {'id': auction.getId() }) }}">Моя заявка на участие</a></li>
+			{% endif %}
+			{% if app.user.canI('/trade/offers') %}
+			<li><a href="{{ path('trade_offers', {'id': auction.getId() }) }}">Заявки на участие</a></li>
+			{% endif %}
+			{% if app.user.canI('/trade/room') %}
+			<li><a href="{{ path('trade_room', {'id': auction.getId() }) }}">Аукционный зал</a></li>
+			{% endif %}
+		{% endif %}
+		{% if app.user.canI('/trade/clarifications/results/answer') %}
+		<li><a href="{{ path('trade_clarifications_results_answer', {'id': auction.getId() }) }}">Разьяснения результатов</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+{% render "SimpleTradeBundle:Trade:tradeHeader" with {'id': auction.getId() } %}
+
+	<br><br>
+
+	<b>Просмотр извещения об аукционе {{ auction.getContent().getName() }}</b><br>
+    Номер извещения о проведении аукциона: {{ auction.getContent().getNoticeNumber() }}<br>
+    Краткое название аукциона: {{ auction.getContent().getName() }}<br>
+    Наименование организатора аукциона: {{ auction.getContent().getCompanyName() }}<br>
+    и т.д.
+    <br><br>
+    Информация о стоимости подачи заявки:<br>
+    Название тарифа: {{ tariff.getTitle() }}<br>
+    Стоимость: {{ tariff.getCost() }}<br>
+    <br>
+	{% if auction.getUser().getId() == app.user.getId() %}
+		{% if app.user.canI('/trade/notice/edit') %}
+			<input type="button" value="Редактировать" id="edit_button_id" {% if time_to_change_expired %}disabled="disabled"{% endif %} />
+		{% endif %}
+		{% if app.user.canI('/trade/notice/refusal') %}
+			<input id="cancel_button_id" value="Отменить" type="button" {% if time_to_change_expired %}disabled="disabled"{% endif %} />
+		{% endif %}
+	{% endif %}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#edit_button_id').click(function(){
+				window.location.href = "{{ path('trade_notice_edit', {'id': auction.getId() }) }}";
+			});
+
+			$('#cancel_button_id').click(function(){
+                $('#myModal').modal('show');
+			});
+		});
+    </script>
+
+          <div id="myModal" class="modal" style="display: none;">
+		    <form action="{{ path('trade_notice_refusal', {'id': auction.getId() }) }}" method="post">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 id="myModalLabel">Отказ от проведения аукциона</h3>
+            </div>
+            <div class="modal-body">
+              <h4>Вы уверены что хотите отменить аукцион?</h4>
+              <br>
+			  <p>Комментарий (не обязательно):</p>
+			  <textarea name="comment" style="width: 515px;"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn">Да</button>
+              <button class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+            </div>
+			</form>
+          </div>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Сообщения</h2>
+    <a href="{{ url('messages') }}/create" class="btn">Создать</a>
+    <table class="info-list-table table table-striped table-hover">
+        <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="15%">От кого</th>
+            <th width="15%">Кому</th>
+            <th width="15%">Тема</th>
+            <th width="15%">Текст сообщения</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for message in messages %}
+        <tr>
+          <td>
+            {{ message.getId() }}
+          </td>
+          <td>
+            {{ message.getFromUser().getLogin() }}
+          </td>
+          <td>
+            {{ message.getToUser().getLogin() }}
+          </td>
+          <td>
+            {{ message.getContent().getSubject() }}
+          </td>
+          <td>
+            {{ message.getContent().getBody() }}
+          </td>
+          <td>
+            <a href="{{ url('messages') }}/remove/{{ message.getId() }}" onclick="return confirm('Вы действительно хотите удалить сообщение «{{ message.getId() }}»?')">удалить</a>
+            <br>
+            <a href="{{ url('messages') }}/change/{{ message.getId() }}">изменить</a>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

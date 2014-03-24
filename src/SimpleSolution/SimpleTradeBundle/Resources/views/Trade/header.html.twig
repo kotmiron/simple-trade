@@ -1,0 +1,84 @@
+
+<div class="topper-trade">
+	<div class="row-fluid">
+		<div class="span6">
+			<div class="dot">
+				<div class="left">Извещение:</div>
+				<div class="right">{{ auction.getContent().getNoticeNumber() }}</div>
+			</div>
+			<div class="dot">
+				<div class="left">Название аукциона (лота):</div>
+				<div class="right">{{ auction.getContent().getTitle() }}</div>
+			</div>
+			{% if auction.getContent().getStartPrice() %}
+				<div class="dot">
+					<div class="left">Начальная (максимальная) цена контракта:</div>
+					<div class="right">
+						<span id="start_price_id">{{ auction.getContent().getStartPrice() }}</span> {{ auction.getContent().getCurrency().getTitle() | transform(auction.getContent().getStartPrice()) }}
+					</div>
+				</div>
+			{% endif %}
+			{% if auction.getContent().getEndPrice() %}
+				<div class="dot">
+					<div class="left">Конечная (минимальная) цена контракта:</div>
+					<div class="right">
+						<span id="end_price_id">{{ auction.getContent().getEndPrice() }}</span> {{ auction.getContent().getCurrency().getTitle() | transform(auction.getContent().getStartPrice()) }}
+					</div>
+				</div>
+			{% endif %}
+			{% if auction.getCompany() %}
+				<div class="dot">
+					<div class="left">Наименование организации, размещающей заказ:</div>
+					<div class="right">
+						<span id="end_price_id">{{ auction.getCompany().getContent().getTitle() }}</span>
+					</div>
+				</div>
+			{% endif %}
+			{% if auction.getContent().getPlaceToAcceptOffers() %}
+				<div class="dot">
+					<div class="left">Место принятия заявок:</div>
+					<div class="right">
+						{{ auction.getContent().getPlaceToAcceptOffers() }}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="span1">&nbsp;</div>
+		<div class="span5">
+			<div class="dot">
+				<div class="left">Регион:</div>
+				<div class="right">{{ auction.getContent().getRegion().getTitle() }}</div>
+			</div>
+			<div class="dot">
+				<div class="left">Квалификации:</div>
+				<div class="right">
+					{{ skills | join('; ') }}
+				</div>
+			</div>
+			{% if auction.getContent().getEndOffer() %}
+				<div class="dot">
+					<div class="left">Дата окончания подачи заявок:</div>
+					<div class="right">
+						{{ auction.getContent().getEndOffer()|date("d.m.Y, H:i:s", 'Europe/Moscow') }}
+					</div>
+				</div>
+			{% endif %}
+			{% if auction.getContent().getStartAuction() %}
+				<div class="dot">
+					<div class="left">Дата проведения аукциона:</div>
+					<div class="right">
+						{{ auction.getContent().getStartAuction()|date("d.m.Y, H:i:s", 'Europe/Moscow') }}
+					</div>
+				</div>
+			{% endif %}
+			{% if auction.getContent().getDatetimeToAcceptOffers() %}
+			<div class="dot">
+				<div class="left">Дата и время принятия заявок:</div>
+				<div class="right">
+					{{ auction.getContent().getDatetimeToAcceptOffers()|date("d.m.Y, H:i:s", 'Europe/Moscow') }}
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>

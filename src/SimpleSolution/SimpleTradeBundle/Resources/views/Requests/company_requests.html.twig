@@ -1,0 +1,29 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Заявки администратору от компании {{ company.getContent().getTitle() }}</h2>
+<table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Тип</th>
+            <th>Статус</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>
+                {{ request.getId() }}
+            </td>
+            <td>
+                {{ request.getType().getTitle() }}
+            </td>
+            <td>
+                {{ request.getStatus().getTitle() }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

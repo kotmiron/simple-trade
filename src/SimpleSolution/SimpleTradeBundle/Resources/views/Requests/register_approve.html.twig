@@ -1,0 +1,29 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Подтверждение регистрации компании {{ company.getContent().getTitle() }}
+	<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="approveForm">
+	  {{ form_errors(form) }}
+
+	<fieldset>
+		<legend>Документы</legend>
+		приложите скан подписанного контракта
+		<div class="control-group">
+		  <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+			  {% for file in form.files %}
+				  <li>{{ form_row(file.title) }}</li>
+			  {% endfor %}
+		  </ul>
+		</div>
+	</fieldset>
+
+	{{ form_rest(form) }}
+
+	<div class="control-group">
+		<div class="controls">
+			<a href="{{ url('requests') }}/register/show/{{ company.getId() }}">Отмена</a>
+			<input type="submit" value="Открыть доступ" class="btn" id="save"/>
+		</div>
+	</div>
+  </form>
+{% endblock %}

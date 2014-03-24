@@ -1,0 +1,106 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+
+	<h1>Вступление в СРО</h1>
+	<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="cabinetSrosEnterForm">
+		  {{ form_errors(form) }}
+
+		  <fieldset>
+			<legend>Основные сведения</legend>
+
+			<div class="control-group">
+				<div class="control-label">{{ form_label(form.sro) }}</div>
+				<div class="controls">
+					<select id="sro" class="validate[required]" required="required">
+						{% for key, sro in sros %}
+							<option value="" disabled>{{ key }}</option>
+							{% for id, item in sro %}
+								<option value="{{ id }}" type="{{ item['type'] }}">&nbsp&nbsp&nbsp&nbsp{{ item['title'] }}</option>
+							{% endfor %}
+						{% endfor %}
+					</select>
+					<span class="help-inline">{{ form_errors(form.sro) }}</span>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="control-label"><a href="" id="show_skills"><span>Квалификации</span> <i class="icon-plus-sign"></i></a></div>
+
+				<div id="skills" style="display:none">
+					<table class="table table-striped table-hover">
+						<thead>
+						<tr>
+							<th>Название</th>
+							<th>Квалификация</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for parent_id, parent in skills %}
+							<tr type="{{ parent['type'] }}" class="skills_type" style="display:none">
+								<td colspan="4">
+								  <label>{{ parent['title'] }}</label>
+								</td>
+							</tr>
+							{% for id, skill in parent['skills'] %}
+								<tr type="{{ parent['type'] }}" class="skills_type" style="display:none">
+									<td></td>
+									<td>
+										<label>{{ skill }}</label>
+									</td>
+								</tr>
+							{% endfor %}
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset>
+			<legend>Документы</legend>
+			<div class="control-group">
+			  <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+				  {% for file in form.files %}
+					  <li>{{ form_row(file.file) }}</li>
+				  {% endfor %}
+			  </ul>
+			</div>
+		</fieldset>
+
+		{{ form_rest(form) }}
+
+		<div class="control-group">
+			<div class="controls">
+				<input type="submit" value="Ok" class="but" id="submit"/>
+			</div>
+		</div>
+	</form>
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+		formObject.initForm("cabinetSrosEnterForm");
+
+        $('#sro').change(function()
+        {
+            $('#cabinetSrosEnterForm_sro').val($(this).val());
+            $('tr.skills_type').hide();
+            $('tr.skills_type[type="' + $('#sro option:selected').attr('type') + '"]').show();
+        });
+
+		$('#show_skills').click(function()
+		{
+			if ($('#skills').is(':visible'))
+				$('#skills').hide(300);
+			else
+				$('#skills').show(300);
+			return false;
+		});
+
+        $('#cabinetSrosEnterForm_sro').val($('#sro').val());
+        $('tr.skills_type[type="' + $('#sro option:selected').attr('type') + '"]').show();
+    });
+</script>
+{% endblock %}
+

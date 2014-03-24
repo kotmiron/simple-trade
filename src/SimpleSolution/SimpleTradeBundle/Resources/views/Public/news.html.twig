@@ -1,0 +1,22 @@
+{% extends 'SimpleTradeBundle::layout.html.twig' %}
+
+{% block body %}
+
+<table>
+    <tr>
+        <td>
+            <h1>Новости</h1>
+            {% for item in news %}
+                <span class="grey">{{ item.getCreatedAt() | date('d.M.Y H:i:s') }}</span>
+				<h4>{{ item.getContent().getTitle() }}</h4>
+                {{ item.getContent().getText() | raw}}
+                <hr>
+            {% endfor %}
+        </td>
+        <td class="main-sidebar">
+            {% render "SimpleTradeBundle:Security:login" %}
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

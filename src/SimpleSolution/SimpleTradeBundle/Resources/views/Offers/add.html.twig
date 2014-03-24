@@ -1,0 +1,41 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+<h2>Создание заявки</h2>
+
+<h3><b>Шапка заявки</b></h3>
+Номер извещения о проведении аукциона: {{ auction.getContent().getNoticeNumber() }}<br>
+Номер редакции извещения о проведении аукциона: ???<br>
+Краткое название аукциона: {{ auction.getContent().getName() }}<br>
+Наименование организатора аукциона: {{ auction.getContent().getCompanyName() }}<br>
+Начальная (максимальная) цена контракта: {{ auction.getContent().getStartPrice() }}<br>
+Валюта контракта: {{ auction.getContent().getCurrency().getTitle() }}<br>
+Обеспечение заявки (если есть): ???<br>
+<br>
+Регион: {{ auction.getContent().getRegion().getTitle() }}<br>
+Квалификации: -<br>
+<br>
+<h3><b>Первая часть заявки</b></h3>
+ИНН: {{ company.getContent().getInn() }}<br>
+КПП: {{ company.getContent().getKpp() }}<br>
+Название компании: {{ company.getContent().getName() }}<br>
+E-mail: {{ user.getEmail() }}<br>
+ФИО  пользователя: {{ user.getName() }}<br>
+<br>
+<h3><b>Документация</b></h3>
+<form action="" method="post" id="file_add" {{ form_enctype(form) }} >
+   <div style="color:#FF0000">{{ form_errors(form) }}</div>
+   <fieldset>
+	   <legend>Добавить файл</legend>
+	   <div class="control-group">
+		   <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+			{% for file in form.files %}
+				<li>{{ form_row(file.file) }}</li>
+			{% endfor %}
+		   </ul>
+	   </div>
+  </fieldset>
+  {{ form_rest(form) }}
+  <input type="submit" value="Сохранить" class="btn"/>
+</form>
+{% endblock %}

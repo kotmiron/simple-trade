@@ -1,0 +1,64 @@
+{% extends 'SimpleTradeBundle::layout.html.twig' %}
+
+{% block body %}
+
+<table>
+    <tr>
+        <td>
+            <h1>Добро пожаловать в систему электронных торгов</h1>
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+			Suspendisse ornare tellus non ligula feugiat pretium.
+			Nullam dapibus mauris vestibulum tellus accumsan feugiat.
+			Quisque dolor ante, convallis in molestie a, accumsan sed sapien.
+			Aenean rutrum, nibh id egestas mollis, ipsum lacus pulvinar tellus,
+			id accumsan odio lacus non dolor. Aliquam odio purus, iaculis eget
+			ornare eget, commodo eget mauris. Etiam tristique bibendum ullamcorper.
+			Donec in eros dui, ut aliquam nibh. Aliquam sit amet urna urna,
+			volutpat gravida mauris. Pellentesque volutpat, diam ut volutpat
+			pretium, velit felis eleifend erat, non pellentesque nibh sapien quis neque.
+			<br><br><br><br>
+            <div class="auction-ie-wrapper">
+				{% if auctions | length > 0 %}
+					<table class="auction table table-striped table-hover">
+						<thead>
+							<tr>
+								<th><b>Регион</b></th>
+								<th><b>Квалификации</b></th>
+								<th><b>Название аукциона</b></th>
+								<th><b>Дата публикации (время московское)</b></th>
+								<th><b>Дата и время проведения аукциона (время московское)</b></th>
+								<th><b>Начальная (максимальная) цена контракта</b></th>
+								<th><b>Подано заявок</b></th>
+								<th><b>Статус</b></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for auction in auctions %}
+								<tr>
+									<td>{{ auction.getContent().getRegion().getTitle() }}</td>
+									<td>{{ auction.getAuctionsSkills() | join('; ') }}</td>
+									<td>{{ auction.getContent().getTitle() }}</td>
+									<td>{{ auction.getCreatedAt() | date("d.m.Y, H:i", "Europe/Moscow") }}</td>
+									<td>{{ auction.getContent().getStartAuction() | date("d.m.Y, H:i", "Europe/Moscow") }}</td>
+									<td>{% if auction.getContent.getStartPrice %}
+											{{ auction.getContent.getStartPrice }} {{ auction.getContent.getCurrency.getTitle | transform(auction.getContent.getStartPrice) }}
+										{% endif %}
+									</td>
+									<td>{{ offersCounts[auction.getId()] }}</td>
+									<td>{{ auction.getStatus().getTitle() }}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<h2>нет ауционов</h2>
+				{% endif %}
+            </div>
+        </td>
+        <td class="main-sidebar">
+            {% render "SimpleTradeBundle:Security:login" %}
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

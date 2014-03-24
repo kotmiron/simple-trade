@@ -1,0 +1,16 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+	{% if app.user.canI('/requests/register') %}
+		<a href="{{ url('requests_register') }}">Новые компании ({{ registerCount }})</a>
+		<br>
+	{% endif %}
+	{% if app.user.canI('/requests/auctions') %}
+		<a href="{{ url('requests_auctions') }}">Новые аукционы ({{ auctionsCount }})</a>
+		<br>
+	{% endif %}
+	{% if app.user.canI('/requests/complaints') %}
+		<a href="{{ url('requests_complaints') }}">Новые жалобы ({{ complaintsCount }})</a>
+		<br>
+	{% endif %}
+{% endblock %}

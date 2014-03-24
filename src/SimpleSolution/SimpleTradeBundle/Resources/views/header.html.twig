@@ -1,0 +1,60 @@
+<div id="topline" class="row-fluid">
+	<div class="span3"><a href="/app_dev.php"><i class="icon-home"></i><b>На главную</a></b></div>
+	<div class="span3"><span>Дата:</span><span id="localDate"></span></div>
+	<div class="span3"><span>Московское время:</span><span id="moscowTime"></span></div>
+	<div class="span3"><span>Местное время:</span><span id="localTime"></span></div>
+</div>
+
+<div id="header" class="container">
+    <div class="deco1">
+        <div class="deco2">
+            <a href="{{ url('index') }}" class="logo" title="На главную"><span>Единая строительная тендерная площадка</span></a>
+            <div class="header-pic"></div>
+            {% for notice in notices %}
+                <div class="alert alert-info">{{ notice }}</div>
+            {% endfor %}
+            <div class="header-user-info">
+                <table>
+                    <tr>
+                        <td>
+                            <span class="grey">Компания:</span> {{ company }}<br>
+                            <span class="grey">Баланс:</span> {{ money }}<br>
+                            <span class="grey">Роли:</span> {{ roles }}<br>
+							{% if not userObj.isGod() %}
+								{% if userObj.canI('/skills') %}
+									<span class="grey">
+									<a href="{{ url('skills') }}" style="text-decoration: underline">Квалификации</a>
+									</span><br>
+								{% endif %}
+							{% endif %}
+                            <span class="red">{% if messagesCount %}Новые уведомления:</span> <a href="{{ url('messages') }}">{{ messagesCount }}</a>{% endif %}
+                        </td>
+                        <td class="c">
+                            <h3>{{ user }}</h3>
+                            <a href="{{ url('cabinet') }}" class="but">Ваш кабинет</a>
+                            <a href="{{ url('logout') }}" class="but">Выход</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="menu" class="">
+    <div class="table_cell"><a href="{{ url('index') }}">Главная</a></div>
+    <div class="table_cell"><a href="">Личный кабинет</a></div>
+    <div class="table_cell"><a href="">Торги</a></div>
+    <div class="table_cell hide"><a href="">Повышение квалификации</a></div>
+    <div class="table_cell hide"><a href="">Специалисты</a></div>
+</div>
+
+<div id="content">
+    <div id="user-block">
+        <div class="menu">
+            {% for item in menu %}
+                <a href="{{ url(item['href']) }}" title="{{ item['title'] }}">{{ item['title'] }}</a>
+            {% endfor %}
+        </div>
+        <div class="user-block-info">
+        <!-- Далее часть в шаблоне base -->

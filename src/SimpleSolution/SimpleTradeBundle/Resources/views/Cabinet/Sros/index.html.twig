@@ -1,0 +1,37 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+     <h2><a href="{{ url('cabinet') }}">Личный кабинет</a> » Мои СРО</h2>
+	 {% if user.canI('/cabinet/sros/enter') %}
+	    <a href="{{ url('cabinet_sros') }}/enter" class="btn">Вступить в новое СРО</a>
+	 {% endif %}
+     <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Название</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for sro in sros %}
+        <tr>
+          <td>
+            {{ sro.getId() }}
+          </td>
+          <td>
+            {{ sro.getContent().getTitle() }}
+          </td>
+          <td>
+			{% if user.canI('/cabinet/sros/show') %}
+                <a href="{{ url('cabinet_sros') }}/show/{{ sro.getId() }}">Просмотр</a>
+            {% endif %}
+            {% if user.canI('/cabinet/sros/exit') %}
+                <a href="{{ url('cabinet_sros') }}/exit/{{ sro.getId() }}" onclick="return confirm('Вы действительно хотите выйти из СРО?')">выйти(не работает)</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+     </table>
+{% endblock %}

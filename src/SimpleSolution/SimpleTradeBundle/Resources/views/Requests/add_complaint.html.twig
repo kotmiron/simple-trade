@@ -1,0 +1,37 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+  Подача жалобы на компанию {{ company.getContent().getTitle() }}
+	<form action="" method="post" {{ form_enctype(form) }} class="form-horizontal" id="complaintsAdd">
+	  {{ form_errors(form) }}
+
+	<fieldset>
+        <legend></legend>
+        <div class="control-group">
+            <div class="control-label">{{ form_label(form.text) }}</div>
+            <div class="controls">
+                {{ form_widget(form.text) }}
+                <span class="help-inline">{{ form_errors(form.text) }}</span>
+            </div>
+        </div>
+    </fieldset>
+	<fieldset>
+		<legend>Документы</legend>
+		<div class="control-group">
+		  <ul class="files" data-prototype="{{ form_widget(form.files.vars.prototype)|e }}">
+			  {% for file in form.files %}
+				  <li>{{ form_row(file.title) }}</li>
+			  {% endfor %}
+		  </ul>
+		</div>
+	</fieldset>
+
+	{{ form_rest(form) }}
+
+	<div class="control-group">
+		<div class="controls">
+			<input type="submit" value="Сохранить" class="btn" id="save"/>
+		</div>
+	</div>
+  </form>
+{% endblock %}

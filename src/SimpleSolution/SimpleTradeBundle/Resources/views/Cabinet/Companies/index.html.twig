@@ -1,0 +1,35 @@
+{% extends 'SimpleTradeBundle::base.html.twig' %}
+
+{% block body %}
+     <h2><a href="{{ url('cabinet') }}">Личный кабинет</a> » Компании</h2>
+     <table class="info-list-table table table-striped table-hover">
+      <thead>
+          <tr>
+            <th width="6%">ID</th>
+            <th width="30%">Название</th>
+            <th width="30%">Статус</th>
+            <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for company in companies %}
+        <tr>
+          <td>
+            {{ company.getId() }}
+          </td>
+          <td>
+            {{ company.getContent().getTitle() }}
+          </td>
+          <td>
+            {{ company.getStatus().getTitle() }}
+          </td>
+          <td>
+            {% if user.canI('/cabinet/companies/change', company, 'change') %}
+                <a href="companies/change/{{ company.getId() }}">изменить</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+     </table>
+{% endblock %}
