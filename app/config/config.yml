@@ -61,7 +61,7 @@ swiftmailer:
     spool:     { type: memory }
 
 parameters:
-    admin_emails: ['berezin@artvisio.com', 'gleb@artvisio.com']
+    admin_emails: ['admin@admin.com']
     pdo.db_options:
         db_table:    sessions
         db_id_col:   id

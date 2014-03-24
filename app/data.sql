@@ -425,8 +425,8 @@ INSERT INTO `properties` (`id`, `key`, `value`, `comment`) VALUES
 (10, 'daysToPay', '30', 'days for company to pay for registration'),
 (11, 'penaltiesToNotice', '2', 'penalties for company, when notification to admin will be sent'),
 (12, 'senderAddress', 'testsimplesolution@gmail.com', 'mail of software, that will be signed into "from" field of email'),
-(13, 'templatesLink', 'http://simpletrade.artvisio.com/app_dev.php/public', 'link to the messages templates'),
-(14, 'adminAddress', 'dmitriy.aleksandrov@simple-solution.biz', 'admin address to send notifications'),
+(13, 'templatesLink', 'http://mysite.com/app_dev.php/public', 'link to the messages templates'),
+(14, 'adminAddress', 'mail@mail.com', 'admin address to send notifications'),
 (15, 'daysToProcessRequest', '1', 'days to do something with new request, created for admin'),
 (16, 'minutesBetweenBids', '2', 'minutes between robots bids');
 
